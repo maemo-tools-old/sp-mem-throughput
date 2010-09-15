@@ -10,8 +10,8 @@
  *  published by the Free Software Foundation.
  */
 
-#include <linux/linkage.h>
-#include <asm/assembler.h>
+#include "linux-linkage.h"
+#include "arm-asm-assembler.h"
 
 		.text
 
@@ -26,7 +26,7 @@
  * occurring in the opposite direction.
  */
 
-ENTRY(memmove)
+ENTRY(linux_arm_memmove)
 
 		subs	ip, r0, r1
 		cmphi	r2, ip
@@ -74,25 +74,25 @@ ENTRY(memmove)
 		rsb	ip, ip, #32
 		addne	pc, pc, ip		@ C is always clear here
 		b	7f
-6:		W(nop)
-		W(ldr)	r3, [r1, #-4]!
-		W(ldr)	r4, [r1, #-4]!
-		W(ldr)	r5, [r1, #-4]!
-		W(ldr)	r6, [r1, #-4]!
-		W(ldr)	r7, [r1, #-4]!
-		W(ldr)	r8, [r1, #-4]!
-		W(ldr)	lr, [r1, #-4]!
+6:		nop
+		ldr	r3, [r1, #-4]!
+		ldr	r4, [r1, #-4]!
+		ldr	r5, [r1, #-4]!
+		ldr	r6, [r1, #-4]!
+		ldr	r7, [r1, #-4]!
+		ldr	r8, [r1, #-4]!
+		ldr	lr, [r1, #-4]!
 
 		add	pc, pc, ip
 		nop
-		W(nop)
-		W(str)	r3, [r0, #-4]!
-		W(str)	r4, [r0, #-4]!
-		W(str)	r5, [r0, #-4]!
-		W(str)	r6, [r0, #-4]!
-		W(str)	r7, [r0, #-4]!
-		W(str)	r8, [r0, #-4]!
-		W(str)	lr, [r0, #-4]!
+		nop
+		str	r3, [r0, #-4]!
+		str	r4, [r0, #-4]!
+		str	r5, [r0, #-4]!
+		str	r6, [r0, #-4]!
+		str	r7, [r0, #-4]!
+		str	r8, [r0, #-4]!
+		str	lr, [r0, #-4]!
 
 	CALGN(	bcs	2b			)
 
@@ -196,4 +196,8 @@ ENTRY(memmove)
 
 18:		backward_copy_shift	push=24	pull=8
 
-ENDPROC(memmove)
+ENDPROC(linux_arm_memmove)
+
+#if defined(__linux__) && defined(__ELF__)
+.section .note.GNU-stack,"",%progbits
+#endif

@@ -113,7 +113,7 @@
 		b	7f
 6:
 		.rept	(1 << LDR1W_SHIFT)
-		W(nop)
+		nop
 		.endr
 		ldr1w	r1, r3, abort=20f
 		ldr1w	r1, r4, abort=20f
@@ -131,7 +131,7 @@
 		add	pc, pc, ip
 		nop
 		.rept	(1 << STR1W_SHIFT)
-		W(nop)
+		nop
 		.endr
 		str1w	r0, r3, abort=20f
 		str1w	r0, r4, abort=20f

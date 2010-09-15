@@ -9,12 +9,12 @@
  *
  *  ASM optimised string functions
  */
-#include <linux/linkage.h>
-#include <asm/assembler.h>
+#include "linux-linkage.h"
+#include "arm-asm-assembler.h"
 
 	.text
 	.align	5
-ENTRY(memchr)
+ENTRY(linux_arm_memchr)
 1:	subs	r2, r2, #1
 	bmi	2f
 	ldrb	r3, [r0], #1
@@ -23,4 +23,8 @@ ENTRY(memchr)
 	sub	r0, r0, #1
 2:	movne	r0, #0
 	mov	pc, lr
-ENDPROC(memchr)
+ENDPROC(linux_arm_memchr)
+
+#if defined(__linux__) && defined(__ELF__)
+.section .note.GNU-stack,"",%progbits
+#endif

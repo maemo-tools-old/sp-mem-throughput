@@ -10,14 +10,14 @@
  *  published by the Free Software Foundation.
  */
 
-#include <linux/linkage.h>
-#include <asm/assembler.h>
+#include "linux-linkage.h"
+#include "arm-asm-assembler.h"
 
 #define LDR1W_SHIFT	0
 #define STR1W_SHIFT	0
 
 	.macro ldr1w ptr reg abort
-	W(ldr) \reg, [\ptr], #4
+	ldr \reg, [\ptr], #4
 	.endm
 
 	.macro ldr4w ptr reg1 reg2 reg3 reg4 abort
@@ -33,7 +33,7 @@
 	.endm
 
 	.macro str1w ptr reg abort
-	W(str) \reg, [\ptr], #4
+	str \reg, [\ptr], #4
 	.endm
 
 	.macro str8w ptr reg1 reg2 reg3 reg4 reg5 reg6 reg7 reg8 abort
@@ -56,8 +56,12 @@
 
 /* Prototype: void *memcpy(void *dest, const void *src, size_t n); */
 
-ENTRY(memcpy)
+ENTRY(linux_arm_memcpy)
 
-#include "copy_template.S"
+#include "linux-arm-copy_template.S"
 
-ENDPROC(memcpy)
+ENDPROC(linux_arm_memcpy)
+
+#if defined(__linux__) && defined(__ELF__)
+.section .note.GNU-stack,"",%progbits
+#endif

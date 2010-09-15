@@ -9,8 +9,8 @@
  *
  *  ASM optimised string functions
  */
-#include <linux/linkage.h>
-#include <asm/assembler.h>
+#include "linux-linkage.h"
+#include "arm-asm-assembler.h"
 
 	.text
 	.align	5
@@ -28,7 +28,7 @@
  * memset again.
  */
 
-ENTRY(memset)
+ENTRY(linux_arm_memset)
 	ands	r3, r0, #3		@ 1 unaligned?
 	bne	1b			@ 1
 /*
@@ -124,4 +124,8 @@ ENTRY(memset)
 	tst	r2, #1
 	strneb	r1, [r0], #1
 	mov	pc, lr
-ENDPROC(memset)
+ENDPROC(linux_arm_memset)
+
+#if defined(__linux__) && defined(__ELF__)
+.section .note.GNU-stack,"",%progbits
+#endif
