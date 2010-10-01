@@ -1,0 +1,5 @@
+sp-mem-throughput (1.0) unstable; urgency=low
+
+  * Initial version of sp-mem-throughput released. Fixes: NB#96440
+
+ -- Tommi Rantala <ext-tommi.1.rantala@nokia.com>  Fri, 01 Oct 2010 11:42:57 +0300

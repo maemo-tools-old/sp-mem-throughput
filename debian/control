@@ -1,0 +1,29 @@
+Source: sp-mem-throughput
+Section: misc
+Priority: extra
+Maintainer: Eero Tamminen <eero.tamminen@nokia.com>
+Build-Depends: debhelper (>= 5.0.0), python-minimal
+Standards-Version: 3.9.1
+
+Package: sp-mem-throughput
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Memory throughput testing tool
+ This is a tool for benchmarking memory throughput by different access
+ patterns, such as read only, write only (similar to the memset function from
+ the C library), or copy (similar to memcpy from the C library). For each of
+ these access patterns, various implementations can be benchmarked, including
+ those found in the C library.
+ .
+ sp-mem-throughput has various parameters, that can be set to measure different
+ kind of workloads, for example to measure the memory throughput when writing
+ to very small or very large memory areas.
+ .
+ Results can be stored in CSV format for later analysis.
+
+Package: sp-mem-throughput-dbg
+Architecture: any
+Section: debug
+Depends: ${misc:Depends}, sp-mem-throughput (= ${binary:Version})
+Description: Debug symbols
+ Contains debug symbol files for sp-mem-throughput.
