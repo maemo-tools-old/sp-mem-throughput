@@ -43,5 +43,11 @@ arch/arm/arm-asm-routines.S: arch/arm/gen-arm-functions.py
 arch/arm/%.o: arch/arm/%.S
 	$(CC) $(CCFLAGS) -D__ASSEMBLY__ -c $< -o $@
 
+install: sp-mem-throughput
+	install -D $< $(DESTDIR)/usr/bin/$<
+
 clean:
 	rm -f $(ARCH_OBJS) arch/arm/arm-asm-routines.h arch/arm/arm-asm-routines.S arch/arm/arm-asm-routines-register.c
+
+distclean: clean
+	rm -f sp-mem-throughput
