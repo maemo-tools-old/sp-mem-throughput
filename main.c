@@ -620,10 +620,22 @@ parse_args(int argc, char **argv)
 			repeats = t;
 			break;
 		case 1001:
-			align_src = (unsigned) atoi(optarg);
+			t = atoi(optarg);
+			if (t <= 0) {
+				fprintf(stderr, "ERROR: --align1 value"
+					" must be greater than zero.\n");
+				exit(1);
+			}
+			align_src = t;
 			break;
 		case 1002:
-			align_dst = (unsigned) atoi(optarg);
+			t = atoi(optarg);
+			if (t <= 0) {
+				fprintf(stderr, "ERROR: --align1 value"
+					" must be greater than zero.\n");
+				exit(1);
+			}
+			align_dst = t;
 			break;
 		case 1003:
 			want_mem_lock = 1;
@@ -656,7 +668,13 @@ parse_args(int argc, char **argv)
 			swap_buffers = 1;
 			break;
 		case 'a':
-			align_src = align_dst = (unsigned) atoi(optarg);
+			t = atoi(optarg);
+			if (t <= 0) {
+				fprintf(stderr, "ERROR: -a/--align value"
+					" must be greater than zero.\n");
+				exit(1);
+			}
+			align_src = align_dst = t;
 			break;
 		case 'h':
 			usage(argv[0]);
