@@ -1,4 +1,4 @@
-sp-mem-throughput (1.0) unstable; urgency=low
+sp-mem-throughput (0.1) unstable; urgency=low
 
   * Initial version of sp-mem-throughput released. Fixes: NB#96440
 
