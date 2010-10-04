@@ -103,7 +103,8 @@ ROUTINE_REGISTER_MEMSET(memset_c_1, "C memset with byte-by-byte writes")
 void *
 memset_c_2(void *s, int c, size_t n)
 {
-	if (n < sizeof(uint16_t)) return memset_c_1(s, c, n);
+	if (n < sizeof(uint16_t) || (uintptr_t)s % 2)
+		return memset_c_1(s, c, n);
 	const uint16_t pattern16 =
 		((uint16_t)(uint8_t)c) << 8 | (uint16_t)(uint8_t)c;
 	uint16_t *s_16 = (uint16_t *)s;
@@ -117,7 +118,8 @@ ROUTINE_REGISTER_MEMSET(memset_c_2, "C memset with 2 byte writes")
 void *
 memset_c_4(void *s, int c, size_t n)
 {
-	if (n < sizeof(uint32_t)) return memset_c_2(s, c, n);
+	if (n < sizeof(uint32_t) || (uintptr_t)s % 4)
+		return memset_c_2(s, c, n);
 	const uint16_t pattern16 =
 		((uint16_t)(uint8_t)c) << 8 | (uint16_t)(uint8_t)c;
 	const uint32_t pattern32 =
@@ -133,7 +135,8 @@ ROUTINE_REGISTER_MEMSET(memset_c_4, "C memset with 4 byte writes")
 void *
 memset_c_8(void *s, int c, size_t n)
 {
-	if (n < sizeof(uint64_t)) return memset_c_4(s, c, n);
+	if (n < sizeof(uint64_t) || (uintptr_t)s % 8)
+		return memset_c_4(s, c, n);
 	const uint16_t pattern16 =
 		((uint16_t)(uint8_t)c) << 8 | (uint16_t)(uint8_t)c;
 	const uint32_t pattern32 =
