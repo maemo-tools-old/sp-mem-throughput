@@ -29,6 +29,11 @@
 memset_neon_128:
 	cmp	r2, #127
 	bls	memset_neon_64
+	/* Pass unaligned and non-multiples-of-128 cases to memset. */
+	tst	r2, #127
+	bne	memset
+	tst	r0, #3
+	bne	memset
 	mov	r3, r0    /* return original pointer in r0 */
 	vpush	{d8-d15}
 	vdup.8	q0, r1
@@ -52,6 +57,11 @@ memset_neon_128:
 memset_neon_64:
 	cmp	r2, #63
 	bls	memset_neon_32
+	/* Pass unaligned and non-multiples-of-64 cases to memset. */
+	tst	r2, #63
+	bne	memset
+	tst	r0, #3
+	bne	memset
 	mov	r3, r0
 	vdup.8	q0, r1
 	vdup.8	q1, r1
@@ -69,6 +79,11 @@ memset_neon_64:
 memset_neon_32:
 	cmp	r2, #31
 	bls	memset_neon_16
+	/* Pass unaligned and non-multiples-of-32 cases to memset. */
+	tst	r2, #31
+	bne	memset
+	tst	r0, #3
+	bne	memset
 	mov	r3, r0
 	vdup.8	q0, r1
 	vdup.8	q1, r1
@@ -82,6 +97,13 @@ memset_neon_32:
 	.global memset_neon_16
 	.type   memset_neon_16, %function
 memset_neon_16:
+	cmp	r2, #15
+	bls	memset
+	/* Pass unaligned and non-multiples-of-16 cases to memset. */
+	tst	r2, #15
+	bne	memset
+	tst	r0, #3
+	bne	memset
 	vdup.8	q0, r1
 	mov	r3, r0
 .L4:	subs	r2, r2, #16
