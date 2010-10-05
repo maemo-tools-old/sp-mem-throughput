@@ -822,7 +822,6 @@ static void
 print_testcase_setup(FILE *stream)
 {
 	unsigned est;
-	struct timespec res;
 	fprintf(stream, "\nTest case information:\n");
 	fprintf(stream, "    Duration for one measurement: %u ms\n", duration);
 	fprintf(stream, "    How many times each measurement is repeated: %u\n",
@@ -855,14 +854,6 @@ print_testcase_setup(FILE *stream)
 		fprintf(stream, "    Estimated run time: %u hour(s)\n",
 				 est/3600);
 	}
-#ifdef CLOCK_PROCESS_CPUTIME_ID
-	if (timing_method == TIMING_CLOCK_PROCESS_CPUTIME &&
-	    clock_getres(CLOCK_PROCESS_CPUTIME_ID, &res) == 0) {
-		fprintf(stream, "    CLOCK_PROCESS_CPUTIME_ID resolution: "
-				"%ld.%09ld seconds\n",
-				res.tv_sec, res.tv_nsec);
-	}
-#endif /* CLOCK_PROCESS_CPUTIME_ID */
 	fprintf(stream, "\n");
 }
 
