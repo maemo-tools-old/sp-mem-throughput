@@ -47,6 +47,7 @@ int bind_to_one_cpu(void);
 
 static struct routine **routines;
 static unsigned routines_cnt;
+static unsigned routine_now_running;
 static char *buf1;
 static char *buf2;
 static size_t buf_len;
@@ -228,11 +229,32 @@ print_testcase_headers(FILE *stream)
 "                  | size B | B=block size in bytes. (MB=1024*1024)\n");
 }
 
+static void
+sigbus_handler(int sig)
+{
+	unsigned len;
+	static const char errmsg1[] =
+		"\n"
+		"ERROR: SIGBUS received while running routine '";
+	static const char errmsg2[] =
+		"'.\n"
+		"****** This usually indicates unaligned memory access.\n"
+		"****** Try adjusting the parameters related to alignment"
+			" or block size.\n\n";
+	for (len=0; routines[routine_now_running]->name[len]; ++len) ;
+	if (len == 0) goto done;
+	if (write(STDERR_FILENO, errmsg1, sizeof(errmsg1)-1) < 0) goto done;
+	if (write(STDERR_FILENO, routines[routine_now_running]->name, len) < 0)
+		goto done;
+	write(STDERR_FILENO, errmsg2, sizeof(errmsg2)-1);
+done:
+	if (raise(sig)) _exit(1);
+}
+
 static volatile sig_atomic_t timerflag;
 static void alarm_handler(int sig)
 {
-	(void)sig;
-	timerflag = 1;
+	timerflag = sig;
 }
 
 static inline void
@@ -364,15 +386,28 @@ static void
 run_flagged_testcases(void)
 {
 	unsigned i;
-	if (signal(SIGALRM, alarm_handler) == SIG_ERR) {
-		perror("signal");
+	struct sigaction sigact;
+	/* SIGBUS */
+	memset(&sigact, 0, sizeof(struct sigaction));
+	sigact.sa_handler = sigbus_handler;
+	sigact.sa_flags = SA_RESETHAND;
+	sigaction(SIGBUS, &sigact, NULL);
+	/* SIGALRM */
+	memset(&sigact, 0, sizeof(struct sigaction));
+	sigact.sa_handler = alarm_handler;
+	if (sigaction(SIGALRM, &sigact, NULL) < 0) {
+		fprintf(stderr,
+			"ERROR: unable to register SIGALRM handler: '%m'.\n");
 		exit(1);
 	}
 	for (i=0; i < routines_cnt; ++i) {
-		if (routines[i]->flagged)
+		if (routines[i]->flagged) {
+			routine_now_running = i;
 			test_run(routines[i]);
+		}
 	}
-	signal(SIGALRM, SIG_IGN);
+	signal(SIGALRM, SIG_DFL);
+	signal(SIGBUS,  SIG_DFL);
 }
 
 static void
