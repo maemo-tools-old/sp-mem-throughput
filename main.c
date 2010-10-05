@@ -336,7 +336,7 @@ test_run(struct routine *r)
 			}
 			timing2 = get_time_us();
 			if (timing1 == 0 || timing2 <= timing1) {
-				fprintf(stderr, "ERROR: insane timing results:"
+				fprintf(stderr, "ERROR: insane timing results: "
 						"time1: %llu, time2: %llu.\n",
 						timing1, timing2);
 				exit(1);
