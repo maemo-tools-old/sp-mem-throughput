@@ -104,7 +104,6 @@ measurement_cmp(const void *a, const void *b)
 static enum {
 	TIMING_AUTODETECT,
 	TIMING_CLOCK_PROCESS_CPUTIME,
-	TIMING_GETRUSAGE,
 	TIMING_GETTIMEOFDAY,
 } timing_method;
 
@@ -120,16 +119,7 @@ get_time_us_gettime(void)
 	return 0;
 #endif
 }
-/* Method 2: CPU time reported by getrusage(). */
-static unsigned long long
-get_time_us_getrusage(void)
-{
-	struct rusage r;
-	if (getrusage(RUSAGE_SELF, &r) < 0) return 0;
-	return (r.ru_utime.tv_sec  + r.ru_stime.tv_sec) * 1000000ULL +
-	       (r.ru_utime.tv_usec + r.ru_stime.tv_usec);
-}
-/* Method 3: Wall clock.
+/* Method 2: Wall clock.
  * Gives bad results if we're fighting for CPU time.
  */
 static unsigned long long
@@ -143,37 +133,25 @@ get_time_us_gettimeofday(void)
 static unsigned long long
 get_time_us(void)
 {
-	/* When we are called for the first time, detect usable timing method.
-	 * After that, bail out on errors.
-	 */
 	unsigned long long ret;
 	switch (timing_method) {
 	case TIMING_CLOCK_PROCESS_CPUTIME:
 		ret = get_time_us_gettime();
 		if (ret) return ret;
 		fprintf(stderr,
-			"ERROR: clock_gettime() failure.\n");
-		exit(1);
-		break;
-	case TIMING_GETRUSAGE:
-		ret = get_time_us_getrusage();
-		if (ret) return ret;
-		fprintf(stderr,
-			"ERROR: gettimeofday() failure.\n");
+			"ERROR: clock_gettime(CLOCK_PROCESS_CPUTIME_ID) failure.\n");
 		exit(1);
 		break;
 	case TIMING_GETTIMEOFDAY:
 		ret = get_time_us_gettimeofday();
 		if (ret) return ret;
 		fprintf(stderr,
-			"ERROR: getrusage() failure.\n");
+			"ERROR: gettimeofday() failure.\n");
 		exit(1);
 		break;
 	case TIMING_AUTODETECT:
 		ret = get_time_us_gettime();
 		if (ret) { timing_method = TIMING_CLOCK_PROCESS_CPUTIME; return ret; }
-		ret = get_time_us_getrusage();
-		if (ret) { timing_method = TIMING_GETRUSAGE; return ret; }
 		ret = get_time_us_gettimeofday();
 		if (ret) { timing_method = TIMING_GETTIMEOFDAY; return ret; }
 		fprintf(stderr,
@@ -181,10 +159,11 @@ get_time_us(void)
 		exit(1);
 		break;
 	default:
-		fprintf(stderr, "ERROR: timing failure.\n");
-		exit(1);
+		abort();
 	};
-	return ret;
+	/* Not reached. */
+	abort();
+	return 0;
 }
 
 static void
