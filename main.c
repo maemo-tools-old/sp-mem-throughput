@@ -246,7 +246,7 @@ sigbus_handler(int sig)
 	if (write(STDERR_FILENO, errmsg1, sizeof(errmsg1)-1) < 0) goto done;
 	if (write(STDERR_FILENO, routines[routine_now_running]->name, len) < 0)
 		goto done;
-	write(STDERR_FILENO, errmsg2, sizeof(errmsg2)-1);
+	if (write(STDERR_FILENO, errmsg2, sizeof(errmsg2)-1) < 0) goto done;
 done:
 	if (raise(sig)) _exit(1);
 }
