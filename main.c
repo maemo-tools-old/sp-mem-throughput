@@ -292,6 +292,33 @@ swap_bufs(void)
 	buf2 = tmp;
 }
 
+/* Initialize the contents of buffer1 (and buffer2) so that when benchmarking
+ * the routine we get sane results.
+ */
+static void
+prepare_buffers(struct routine *r)
+{
+	switch (r->type) {
+	case routine_memchr:
+		memset(&buf1[offset], ~(unsigned)mem_pattern, block_size);
+		if (buf2) memset(&buf2[offset], ~(unsigned)mem_pattern,
+				block_size);
+		break;
+	case routine_strcpy: /* fall through */
+	case routine_strlen:
+		memset(&buf1[offset], ~(unsigned)mem_pattern, block_size-1);
+		buf1[offset+block_size-1] = 0;
+		if (buf2) {
+			memset(&buf2[offset], ~(unsigned)mem_pattern,
+					block_size-1);
+			buf2[offset+block_size-1] = 0;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 static void
 test_run(struct routine *r)
 {
@@ -309,6 +336,7 @@ test_run(struct routine *r)
 	block_size_iter_reset();
 	for (i=0; i < block_sizes_cnt; ++i) {
 		block_size = block_size_iter_next();
+		prepare_buffers(r);
 		for (j=0; j < repeats; ++j) {
 			memset(&dur, 0, sizeof(struct itimerval));
 			dur.it_value.tv_sec  = (duration / 1000u);
@@ -773,13 +801,11 @@ allocate_arrays(void)
 {
 	void *p;
 	unsigned i;
-	int need1=1, need2=0, fill1=0, str=0;
+	int need1=1, need2=0;
 	for (i=0; i < routines_cnt; ++i) {
 		if (!routines[i]->flagged) continue;
-		if (routines[i]->type == routine_memchr) fill1=1;
-		if (routines[i]->type == routine_strlen) fill1=str=1;
 		if (routines[i]->type == routine_memcpy) need2=1;
-		if (routines[i]->type == routine_strcpy) need2=str=1;
+		if (routines[i]->type == routine_strcpy) need2=1;
 	}
 	buf_len = block_sizes_largest+(2*4096);
 	if (sliding_offset) buf_len += 256;
@@ -803,10 +829,8 @@ allocate_arrays(void)
 		}
 		buf2 = p;
 	}
-	if (fill1) memset(buf1, ~(unsigned)mem_pattern, buf_len);
 	if (need1) buf1 = force_alignment(buf1, align_src);
 	if (need2) buf2 = force_alignment(buf2, align_dst);
-	if (str) buf1[buf_len-1]=0;
 }
 
 static unsigned
