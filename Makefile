@@ -28,9 +28,15 @@ ARCH_OBJS += arch/arm/linux-arm-memset.o
 ARCH_OBJS += arch/arm/arm-asm-routines.o
 ARCH_OBJS += arch/arm/memset-neon.o
 ARCH_OBJS += arch/arm/memread-neon.o
+ARCH_OBJS += arch/arm/memcpy-neon.o
+ARCH_OBJS += arch/arm/memcpy-neon-unaligned.o
 ARCH_SRCS += arch/arm/kernel-routines-register.c
 ARCH_SRCS += arch/arm/memset-neon-register.c
 ARCH_SRCS += arch/arm/memread-neon-register.c
+ARCH_SRCS += arch/arm/memcpy-neon-register.c
+
+arch/arm/memcpy-neon-unaligned.o: arch/arm/memcpy-neon.S
+	$(CC) $(CCFLAGS) -DENABLE_UNALIGNED_MEM_ACCESSES -c $< -o $@
 else
 endif
 
