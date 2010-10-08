@@ -52,7 +52,7 @@ static unsigned routine_now_running;
 static char *buf1;
 static char *buf2;
 static size_t buf_len;
-static int swap_buffers;
+static int no_swap_buffers;
 static unsigned repeats = 6;
 static unsigned duration = 200;
 static int mem_pattern;
@@ -334,7 +334,7 @@ test_run(struct routine *r)
 			runner(r);
 			timing1 = get_time_us();
 			if (sliding_offset) {
-				if (swap_buffers && buf2) {
+				if (no_swap_buffers==0 && buf2) {
 					do {
 						runner(r);
 						++reps;
@@ -351,7 +351,7 @@ test_run(struct routine *r)
 					} while (timerflag == 0);
 				}
 			} else {
-				if (swap_buffers && buf2) {
+				if (no_swap_buffers==0 && buf2) {
 					do {
 						runner(r);
 						++reps;
@@ -474,7 +474,7 @@ static const struct option options[] = {
 	{ "list", 0, NULL, 'L' },
 	{ "csv", 1, NULL, 1006 },
 	{ "sliding-offset", 1, NULL, 1007 },
-	{ "swap-buffers", 0, NULL, 1008 },
+	{ "no-swap-buffers", 0, NULL, 1008 },
 	{ "help", 0, NULL, 'h' },
 	{ NULL, 0, NULL, 0 }
 };
@@ -536,11 +536,12 @@ usage(const char *prog)
 "                       positions by N bytes. This incrementation wraps over at\n"
 "                       256 bytes [default: 0, max: 255].\n"
 "\n"
-"       --swap-buffers  Swap buffer1 and buffer2 pointers between each function\n"
-"                       call, eg. memcpy() bechmarks will copy 1->2, then 2->1,\n"
-"                       then 1->2 and so forth. No effect for benchmarks that\n"
-"                       only need one buffer, such as the memset category\n"
-"                       [default: no].\n"
+"       --no-swap-buffers\n"
+"                       By default, buffer1 and buffer2 pointers are swapped\n"
+"                       between each function call, eg. memcpy() bechmarks will\n"
+"                       copy 1->2, then 2->1, then 1->2 and so forth. This option\n"
+"                       can be used to disable the swapping. Only has effect if\n"
+"                       both of the buffers are allocated.\n"
 "\n"
 "       --csv=FILE      Write results in CSV format to FILE. Default file name is\n"
 "                       'sp-mem-throughput-<device>-<year>-<week>-<build>.csv'\n"
@@ -719,7 +720,7 @@ parse_args(int argc, char **argv)
 			sliding_offset = t;
 			break;
 		case 1008:
-			swap_buffers = 1;
+			no_swap_buffers = 1;
 			break;
 		case 'a':
 			t = atoi(optarg);
