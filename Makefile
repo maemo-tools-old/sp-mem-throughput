@@ -17,6 +17,7 @@ COMMON_SRCS += routine-desc.c
 COMMON_SRCS += routines.c
 COMMON_SRCS += sched-util.c
 COMMON_SRCS += validate.c
+COMMON_SRCS += directfb-memcpy.c
 
 MACHINE := $(shell uname -m)
 ifeq ($(MACHINE),arm)
