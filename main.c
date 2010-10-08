@@ -797,6 +797,7 @@ allocate_arrays(void)
 			exit(1);
 		}
 		buf1 = p;
+		memset(buf1, 0, buf_len);
 	}
 	if (need2) {
 		p = (void *)buf2;
@@ -807,6 +808,7 @@ allocate_arrays(void)
 			exit(1);
 		}
 		buf2 = p;
+		memset(buf2, 0, buf_len);
 	}
 	if (need1) buf1 = force_alignment(buf1, align_src);
 	if (need2) buf2 = force_alignment(buf2, align_dst);
