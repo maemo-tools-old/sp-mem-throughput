@@ -66,7 +66,7 @@ static int no_banner;
 static char *csv_filename;
 static char default_block_sizes[] =
 	"32,64,128,256,512,1kb,2kb,4kb,8kb";
-static char *argv_copy;
+static char *argv_copy, *banner;
 
 void
 routine_register(struct routine *r)
@@ -418,14 +418,25 @@ run_flagged_testcases(void)
 }
 
 static void
-print_banner(FILE *stream, const char *prog)
+init_banner(const char *prog)
 {
-	char *base;
+	const char *base;
 	base = basename(prog);
-	fprintf(stream,
-"%s: memory performance test suite v%d.%d\n\n",
-		base, version_major, version_minor);
-	fflush(stream);
+	if (!base) return;
+	if (asprintf(&banner,
+		"%s: memory performance test suite v%d.%d",
+		base, version_major, version_minor) < 0) {
+		banner = NULL;
+	}
+}
+
+static void
+print_banner(FILE *stream)
+{
+	if (banner) {
+		fprintf(stream, "%s\n\n", banner);
+		fflush(stream);
+	}
 }
 
 static void
@@ -475,7 +486,7 @@ usage(const char *prog)
 	base = basename(prog);
 
 	/* Banner */
-	print_banner(stderr, prog);
+	print_banner(stderr);
 
 	/* One line help */
 	fprintf(stderr, "Usage: %s [OPT...] <test type>\n", base);
@@ -627,7 +638,7 @@ parse_args(int argc, char **argv)
 			break;
 		switch (c) {
 		case 'L':
-			print_banner(stdout, argv[0]);
+			print_banner(stdout);
 			print_available_routines(stdout);
 			exit(0);
 			break;
@@ -939,8 +950,9 @@ int main(int argc, char **argv)
 {
 	argv_copy = dup_argv(argc, argv);
 	qsort(routines, routines_cnt, sizeof(struct routine *), routine_cmp);
+	init_banner(argv[0]);
 	parse_args(argc, argv);
-	if (!no_banner) print_banner(stdout, argv[0]);
+	if (!no_banner) print_banner(stdout);
 	allocate_arrays();
 	if (want_mem_lock) memlock();
 	if (validation_mode) {
@@ -954,7 +966,7 @@ int main(int argc, char **argv)
 	if (!csv_filename) csv_filename = csv_get_default_name();
 	if (!csv_filename) csv_filename = "sp-mem-throughput.csv";
 	if (output_csv(csv_filename, routines, routines_cnt,
-			repeats, argv_copy) < 0)
+			repeats, argv_copy, banner) < 0)
 		exit(1);
 	return 0;
 }

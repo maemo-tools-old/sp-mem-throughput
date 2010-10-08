@@ -82,7 +82,8 @@ output_csv(const char *csv_filename,
            struct routine **routines,
            size_t routines_cnt,
            unsigned repeats,
-           const char *argv)
+           const char *argv,
+           const char *banner)
 {
 	int fd, ret=-1;
 	unsigned i, j, k, b;
@@ -102,7 +103,8 @@ output_csv(const char *csv_filename,
 		goto error;
 	}
 	fprintf(stderr, "Writing results in CSV format: %s\n", csv_filename);
-	fprintf(fp, "# Command line: %s\n", argv);
+	if (banner) fprintf(fp, "# %s\n", banner);
+	if (argv) fprintf(fp, "# Command line: %s\n", argv);
 	fprintf(fp,
 		"Category,"
 		"Function,"

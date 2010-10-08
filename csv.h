@@ -33,7 +33,8 @@ int output_csv(const char *filename,
 		struct routine **routines,
 		size_t routines_cnt,
 		unsigned repeats,
-		const char *argv);
+		const char *argv,
+		const char *banner);
 
 #ifdef __cplusplus
 }
