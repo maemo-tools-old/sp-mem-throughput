@@ -32,11 +32,16 @@ ARCH_OBJS += arch/arm/memread-neon.o
 ARCH_OBJS += arch/arm/memcpy-neon.o
 ARCH_OBJS += arch/arm/memcpy-neon-unaligned.o
 ARCH_OBJS += arch/arm/directfb-memcpy.o
+ARCH_OBJS += arch/arm/code-aurora-forum-memcpy.o
+ARCH_OBJS += arch/arm/code-aurora-forum-memmove.o
+ARCH_OBJS += arch/arm/code-aurora-forum-memset.o
+
 ARCH_SRCS += arch/arm/kernel-routines-register.c
 ARCH_SRCS += arch/arm/memset-neon-register.c
 ARCH_SRCS += arch/arm/memread-neon-register.c
 ARCH_SRCS += arch/arm/memcpy-neon-register.c
 ARCH_SRCS += arch/arm/directfb-memcpy.c
+ARCH_SRCS += arch/arm/code-aurora-forum-register.c
 
 arch/arm/memcpy-neon-unaligned.o: arch/arm/memcpy-neon.S
 	$(CC) $(CCFLAGS) -DENABLE_UNALIGNED_MEM_ACCESSES -c $< -o $@
