@@ -24,6 +24,7 @@
 #endif
 
 #include "blocks.h"
+#include "cgroup-detect.h"
 #include "routine.h"
 
 #include <stdio.h>
@@ -88,6 +89,7 @@ output_csv(const char *csv_filename,
 	int fd, ret=-1;
 	unsigned i, j, k, b;
 	FILE *fp;
+	char *cg;
 	fp = NULL;
 	fprintf(stderr, "\n");
 	if (!csv_filename) {
@@ -105,6 +107,9 @@ output_csv(const char *csv_filename,
 	fprintf(stderr, "Writing results in CSV format: %s\n", csv_filename);
 	if (banner) fprintf(fp, "# %s\n", banner);
 	if (argv) fprintf(fp, "# Command line: %s\n", argv);
+	cg = current_cgroup();
+	if (cg) fprintf(fp, "# WARNING: /proc/self/cgroup: '%s'\n", cg);
+	free(cg);
 	fprintf(fp,
 		"Category,"
 		"Function,"

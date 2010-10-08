@@ -22,6 +22,7 @@
 #define _GNU_SOURCE
 
 #include "blocks.h"
+#include "cgroup-detect.h"
 #include "csv.h"
 #include "routine.h"
 #include "sched-util.h"
@@ -874,6 +875,19 @@ print_testcase_setup(FILE *stream)
 }
 
 static void
+print_cgroup_info(FILE *stream)
+{
+	char *cg = current_cgroup();
+	if (!cg) goto done;
+	fprintf(stream,
+		"WARNING: running under a resource Control Group!\n"
+		"/proc/self/cgroup: '%s'\n\n",
+		cg);
+done:
+	free(cg);
+}
+
+static void
 memlock(void)
 {
 	if (mlockall(MCL_CURRENT | MCL_FUTURE) < 0) {
@@ -890,6 +904,7 @@ print_headers(void)
 	print_sched_info(stdout);
 	print_cpu_info(stdout);
 	print_testcase_setup(stdout);
+	print_cgroup_info(stderr);
 	print_testcase_headers(stdout);
 	fflush(stdout);
 }

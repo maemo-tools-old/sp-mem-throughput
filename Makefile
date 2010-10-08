@@ -9,15 +9,17 @@ ARCH_OBJS=
 
 COMMON_SRCS += atoll.c
 COMMON_SRCS += blocks.c
+COMMON_SRCS += cgroup-detect.c
 COMMON_SRCS += cpu.c
 COMMON_SRCS += csv.c
-COMMON_SRCS += libc-routine-register.c
 COMMON_SRCS += main.c
 COMMON_SRCS += routine-desc.c
 COMMON_SRCS += routines.c
 COMMON_SRCS += sched-util.c
 COMMON_SRCS += validate.c
+
 COMMON_SRCS += directfb-memcpy.c
+COMMON_SRCS += libc-routine-register.c
 
 MACHINE := $(shell uname -m)
 ifeq ($(MACHINE),arm)
