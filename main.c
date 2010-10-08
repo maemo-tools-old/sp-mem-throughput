@@ -65,7 +65,7 @@ static int validation_mode;
 static int no_banner;
 static char *csv_filename;
 static char default_block_sizes[] =
-	"32,64,128,256,512,1kb,2kb,4kb,8kb";
+	"8,16,32,64,128,256,1kb,4kb,8kb,64kb,1mb,10mb";
 static char *argv_copy, *banner;
 
 void
