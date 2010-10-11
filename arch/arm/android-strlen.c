@@ -28,6 +28,10 @@
 #include <string.h>
 #include <stdint.h>
 
+#ifndef __ARM_HAVE_PLD
+#define __ARM_HAVE_PLD 1
+#endif
+
 size_t android_strlen(const char *s)
 {
     __builtin_prefetch(s);
