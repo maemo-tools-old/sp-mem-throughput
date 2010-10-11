@@ -209,10 +209,34 @@ print_testcase_headers(FILE *stream)
 "                  | size B | B=block size in bytes. (MB=1024*1024)\n");
 }
 
+static unsigned
+handler_namelen(void)
+{
+	unsigned len;
+	for (len=0; routines[routine_now_running]->name[len]; ++len) ;
+	return len;
+}
+
+static void
+sigsegv_handler(int sig)
+{
+	static const char errmsg1[] =
+		"\n"
+		"ERROR: SIGSEGV received while running routine '";
+	static const char errmsg2[] = "'.\n";
+	unsigned len = handler_namelen();
+	if (len == 0) goto done;
+	if (write(STDERR_FILENO, errmsg1, sizeof(errmsg1)-1) < 0) goto done;
+	if (write(STDERR_FILENO, routines[routine_now_running]->name, len) < 0)
+		goto done;
+	if (write(STDERR_FILENO, errmsg2, sizeof(errmsg2)-1) < 0) goto done;
+done:
+	if (raise(sig)) _exit(1);
+}
+
 static void
 sigbus_handler(int sig)
 {
-	unsigned len;
 	static const char errmsg1[] =
 		"\n"
 		"ERROR: SIGBUS received while running routine '";
@@ -221,7 +245,7 @@ sigbus_handler(int sig)
 		"****** This usually indicates unaligned memory access.\n"
 		"****** Try adjusting the parameters related to alignment"
 			" or block size.\n\n";
-	for (len=0; routines[routine_now_running]->name[len]; ++len) ;
+	unsigned len = handler_namelen();
 	if (len == 0) goto done;
 	if (write(STDERR_FILENO, errmsg1, sizeof(errmsg1)-1) < 0) goto done;
 	if (write(STDERR_FILENO, routines[routine_now_running]->name, len) < 0)
@@ -400,6 +424,11 @@ run_flagged_testcases(void)
 	sigact.sa_handler = sigbus_handler;
 	sigact.sa_flags = SA_RESETHAND;
 	sigaction(SIGBUS, &sigact, NULL);
+	/* SIGSEGV */
+	memset(&sigact, 0, sizeof(struct sigaction));
+	sigact.sa_handler = sigsegv_handler;
+	sigact.sa_flags = SA_RESETHAND;
+	sigaction(SIGSEGV, &sigact, NULL);
 	/* SIGALRM */
 	memset(&sigact, 0, sizeof(struct sigaction));
 	sigact.sa_handler = alarm_handler;
@@ -416,6 +445,7 @@ run_flagged_testcases(void)
 	}
 	signal(SIGALRM, SIG_DFL);
 	signal(SIGBUS,  SIG_DFL);
+	signal(SIGSEGV, SIG_DFL);
 }
 
 static void
