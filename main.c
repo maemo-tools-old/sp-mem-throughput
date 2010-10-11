@@ -189,7 +189,7 @@ print_measurement(struct routine *r)
 		for (j=0, rowcnt=0; j < repeats; ++j) {
 			throughput = m_thr(&r->measurements[i*repeats+j], b);
 			if (printf("|%7.1f", throughput) <= 8) {
-				printf(" ");
+				if (rowcnt < 5) printf(" ");
 			}
 			if (++rowcnt == 6 && j < repeats-1) {
 				printf("\n%27s", "");
