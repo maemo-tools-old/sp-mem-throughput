@@ -30,8 +30,8 @@
 extern "C" {
 #endif
 
-unsigned block_sizes_largest;
-unsigned block_sizes_cnt;
+extern unsigned block_sizes_largest;
+extern unsigned block_sizes_cnt;
 void block_size_parse(char *);
 void block_size_iter_reset(void);
 unsigned block_size_iter_next(void);
