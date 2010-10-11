@@ -19,8 +19,9 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "routine.h"
 #include "blocks.h"
+#include "routine.h"
+#include "validate.h"
 
 #include <stdio.h>
 

@@ -25,6 +25,7 @@
 
 #include "blocks.h"
 #include "cgroup-detect.h"
+#include "csv.h"
 #include "routine.h"
 
 #include <stdio.h>

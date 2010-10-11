@@ -23,6 +23,8 @@
 #define _GNU_SOURCE
 #endif
 
+#include "cgroup-detect.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
