@@ -23,11 +23,14 @@
 
 #include "routine.h"
 
+void memread_neon_8(const void *, size_t);
 void memread_neon_16(const void *, size_t);
 void memread_neon_32(const void *, size_t);
 void memread_neon_64(const void *, size_t);
 void memread_neon_128(const void *, size_t);
 
+ROUTINE_REGISTER_MEMREAD(memread_neon_8,
+	"ARM NEON memread, 8 byte aligned reads")
 ROUTINE_REGISTER_MEMREAD(memread_neon_16,
 	"ARM NEON memread, 16 byte aligned reads")
 ROUTINE_REGISTER_MEMREAD(memread_neon_32,

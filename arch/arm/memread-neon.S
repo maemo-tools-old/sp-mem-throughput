@@ -66,11 +66,23 @@ memread_neon_32:
 	.global memread_neon_16
 	.type   memread_neon_16, %function
 memread_neon_16:
+	cmp	r1, #15
+	bls	memread_neon_8
 .L4:	subs	r1, r1, #16
 	vldmia	r0!, {d0-d1}
 	bne	.L4
 	bx	lr
 	.size	memread_neon_16, .-memread_neon_16
+
+/* read memory 8 bytes per loop. */
+	.global memread_neon_8
+	.type   memread_neon_8, %function
+memread_neon_8:
+.L5:	subs	r1, r1, #8
+	vldmia	r0!, {d0}
+	bne	.L5
+	bx	lr
+	.size	memread_neon_8, .-memread_neon_8
 
 #if defined(__linux__) && defined(__ELF__)
 	.section .note.GNU-stack,"",%progbits
