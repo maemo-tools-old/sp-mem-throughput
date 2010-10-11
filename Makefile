@@ -6,6 +6,7 @@ LDFLAGS += -lrt
 COMMON_SRCS=
 ARCH_SRCS=
 ARCH_OBJS=
+ARCH_CLEAN=
 
 COMMON_SRCS += atoll.c
 COMMON_SRCS += blocks.c
@@ -47,23 +48,27 @@ ARCH_SRCS += arch/arm/code-aurora-forum-register.c
 
 arch/arm/memcpy-neon-unaligned.o: arch/arm/memcpy-neon.S
 	$(CC) $(CCFLAGS) -DENABLE_UNALIGNED_MEM_ACCESSES -c $< -o $@
+
+arch/arm/arm-asm-routines.S: arch/arm/gen-arm-functions.py
+	cd $(PWD)/arch/arm && ./gen-arm-functions.py
+
+ARCH_CLEAN += arch/arm/arm-asm-routines.h
+ARCH_CLEAN += arch/arm/arm-asm-routines.S
+ARCH_CLEAN += arch/arm/arm-asm-routines-register.c
+
+arch/arm/%.o: arch/arm/%.S
+	$(CC) $(CCFLAGS) -D__ASSEMBLY__ -c $< -o $@
 else
 endif
 
 sp-mem-throughput: $(COMMON_SRCS) $(ARCH_SRCS) $(ARCH_OBJS)
 	$(CC) $(CCFLAGS) $(LDFLAGS) $+ -o $@
 
-arch/arm/arm-asm-routines.S: arch/arm/gen-arm-functions.py
-	cd $(PWD)/arch/arm && ./gen-arm-functions.py
-
-arch/arm/%.o: arch/arm/%.S
-	$(CC) $(CCFLAGS) -D__ASSEMBLY__ -c $< -o $@
-
 install: sp-mem-throughput
 	install -D $< $(DESTDIR)/usr/bin/$<
 
 clean:
-	rm -f $(ARCH_OBJS) arch/arm/arm-asm-routines.h arch/arm/arm-asm-routines.S arch/arm/arm-asm-routines-register.c
+	rm -f $(ARCH_OBJS) $(ARCH_CLEAN)
 
 distclean: clean
 	rm -f sp-mem-throughput
