@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2010 by Nokia Corporation
  *
- * Authors: Tommi Rantala
+ * Authors: Tommi Rantala, Siarhei Siamashka
  * Contact: Eero Tamminen <eero.tamminen@nokia.com>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -22,67 +22,308 @@
  * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/* C prototypes: void memread_neon_{16,32,64,128}(const void *, size_t); */
+/* C prototypes:
+ *     void read_vldm_{8,16,32,64,128,256}(const void *, size_t);
+ *     void read_vld1_{8,16,32,64,128,256}(const void *, size_t);
+ *     void read_vldm_pld_{8,16,32,64,128,256}(const void *, size_t);
+ *     void read_vld1_pld_{8,16,32,64,128,256}(const void *, size_t);
+ */
+
+/* read memory 256 bytes per loop. */
+	.global	read_vldm_256
+	.func	read_vldm_256
+read_vldm_256:
+1:	subs	r1, r1, #256
+	vldmia	r0!, {d16-d31}
+	vldmia	r0!, {d16-d31}
+	bgt	1b
+	bx	lr
+	.endfunc
 
 /* read memory 128 bytes per loop. */
-	.global memread_neon_128
-	.type   memread_neon_128, %function
-memread_neon_128:
-	cmp	r1, #127
-	bls	memread_neon_64
-	vpush	{d8-d15}
-.L1:	subs	r1, r1, #128
-	vldmia	r0!, {d0-d15}
-	bne	.L1
-	vpop	{d8-d15}
+	.global	read_vldm_128
+	.func	read_vldm_128
+read_vldm_128:
+1:	subs	r1, r1, #128
+	vldmia	r0!, {d16-d31}
+	bgt	1b
 	bx	lr
-	.size	memread_neon_128, .-memread_neon_128
+	.endfunc
 
 /* read memory 64 bytes per loop. */
-	.global memread_neon_64
-	.type   memread_neon_64, %function
-memread_neon_64:
-	cmp	r1, #63
-	bls	memread_neon_32
-.L2:	subs	r1, r1, #64
+	.global	read_vldm_64
+	.func	read_vldm_64
+read_vldm_64:
+1:	subs	r1, r1, #64
 	vldmia	r0!, {d0-d7}
-	bne	.L2
+	bgt	1b
 	bx	lr
-	.size	memread_neon_64, .-memread_neon_64
+	.endfunc
 
 /* read memory 32 bytes per loop. */
-	.global memread_neon_32
-	.type   memread_neon_32, %function
-memread_neon_32:
-	cmp	r1, #31
-	bls	memread_neon_16
-.L3:	subs	r1, r1, #32
+	.global	read_vldm_32
+	.func	read_vldm_32
+read_vldm_32:
+1:	subs	r1, r1, #32
 	vldmia	r0!, {d0-d3}
-	bne	.L3
+	bgt	1b
 	bx	lr
-	.size	memread_neon_32, .-memread_neon_32
+	.endfunc
 
 /* read memory 16 bytes per loop. */
-	.global memread_neon_16
-	.type   memread_neon_16, %function
-memread_neon_16:
-	cmp	r1, #15
-	bls	memread_neon_8
-.L4:	subs	r1, r1, #16
+	.global	read_vldm_16
+	.func	read_vldm_16
+read_vldm_16:
+1:	subs	r1, r1, #16
 	vldmia	r0!, {d0-d1}
-	bne	.L4
+	bgt	1b
 	bx	lr
-	.size	memread_neon_16, .-memread_neon_16
+	.endfunc
 
 /* read memory 8 bytes per loop. */
-	.global memread_neon_8
-	.type   memread_neon_8, %function
-memread_neon_8:
-.L5:	subs	r1, r1, #8
+	.global	read_vldm_8
+	.func	read_vldm_8
+read_vldm_8:
+1:	subs	r1, r1, #8
 	vldmia	r0!, {d0}
-	bne	.L5
+	bgt	1b
 	bx	lr
-	.size	memread_neon_8, .-memread_neon_8
+	.endfunc
+
+/* read memory 256 bytes per loop. */
+	.global	read_vld1_256
+	.func	read_vld1_256
+read_vld1_256:
+1:	subs	r1, r1, #256
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 128 bytes per loop. */
+	.global	read_vld1_128
+	.func	read_vld1_128
+read_vld1_128:
+1:	subs	r1, r1, #128
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 64 bytes per loop. */
+	.global	read_vld1_64
+	.func	read_vld1_64
+read_vld1_64:
+1:	subs	r1, r1, #64
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 32 bytes per loop. */
+	.global	read_vld1_32
+	.func	read_vld1_32
+read_vld1_32:
+1:	subs	r1, r1, #32
+	vld1.64	{d16-d19}, [r0,:256]!
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 16 bytes per loop. */
+	.global	read_vld1_16
+	.func	read_vld1_16
+read_vld1_16:
+1:	subs	r1, r1, #16
+	vld1.64	{d16,d17}, [r0,:128]!
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 8 bytes per loop. */
+	.global	read_vld1_8
+	.func	read_vld1_8
+read_vld1_8:
+1:	subs	r1, r1, #8
+	vld1.64	{d16}, [r0,:64]!
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 256 bytes per loop. */
+	.global	read_vldm_pld_256
+	.func	read_vldm_pld_256
+read_vldm_pld_256:
+1:
+	pld	[r0, #64]
+	pld	[r0, #256]
+	pld	[r0, #512]
+	subs	r1, r1, #256
+	vldmia	r0!, {d16-d31}
+	vldmia	r0!, {d16-d31}
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 128 bytes per loop. */
+	.global	read_vldm_pld_128
+	.func	read_vldm_pld_128
+read_vldm_pld_128:
+1:
+	pld	[r0, #64]
+	pld	[r0, #256]
+	pld	[r0, #320]
+	subs	r1, r1, #128
+	vldmia	r0!, {d16-d31}
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 64 bytes per loop. */
+	.global	read_vldm_pld_64
+	.func	read_vldm_pld_64
+read_vldm_pld_64:
+1:
+	pld	[r0, #320]
+	subs	r1, r1, #64
+	vldmia	r0!, {d0-d7}
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 32 bytes per loop. */
+	.global	read_vldm_pld_32
+	.func	read_vldm_pld_32
+read_vldm_pld_32:
+1:
+	pld	[r0, #320]
+	subs	r1, r1, #32
+	vldmia	r0!, {d0-d3}
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 16 bytes per loop. */
+	.global	read_vldm_pld_16
+	.func	read_vldm_pld_16
+read_vldm_pld_16:
+1:
+	pld	[r0, #320]
+	subs	r1, r1, #16
+	vldmia	r0!, {d0-d1}
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 8 bytes per loop. */
+	.global	read_vldm_pld_8
+	.func	read_vldm_pld_8
+read_vldm_pld_8:
+1:
+	pld	[r0, #320]
+	subs	r1, r1, #8
+	vldmia	r0!, {d0}
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 256 bytes per loop. */
+	.global	read_vld1_pld_256
+	.func	read_vld1_pld_256
+read_vld1_pld_256:
+1:
+	pld	[r0, #64]
+	pld	[r0, #256]
+	pld	[r0, #320]
+	subs	r1, r1, #256
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 128 bytes per loop. */
+	.global	read_vld1_pld_128
+	.func	read_vld1_pld_128
+read_vld1_pld_128:
+1:
+	pld	[r0, #64]
+	pld	[r0, #256]
+	pld	[r0, #320]
+	subs	r1, r1, #128
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 64 bytes per loop. */
+	.global	read_vld1_pld_64
+	.func	read_vld1_pld_64
+read_vld1_pld_64:
+1:
+	pld	[r0, #320]
+	subs	r1, r1, #64
+	vld1.64	{d16-d19}, [r0,:256]!
+	vld1.64	{d16-d19}, [r0,:256]!
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 32 bytes per loop. */
+	.global	read_vld1_pld_32
+	.func	read_vld1_pld_32
+read_vld1_pld_32:
+1:
+	pld	[r0, #320]
+	subs	r1, r1, #32
+	vld1.64	{d16-d19}, [r0,:256]!
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 16 bytes per loop. */
+	.global	read_vld1_pld_16
+	.func	read_vld1_pld_16
+read_vld1_pld_16:
+1:
+	pld	[r0, #320]
+	subs	r1, r1, #16
+	vld1.64	{d16,d17}, [r0,:128]!
+	bgt	1b
+	bx	lr
+	.endfunc
+
+/* read memory 8 bytes per loop. */
+	.global	read_vld1_pld_8
+	.func	read_vld1_pld_8
+read_vld1_pld_8:
+1:
+	pld	[r0, #320]
+	subs	r1, r1, #8
+	vld1.64	{d16}, [r0,:64]!
+	bgt	1b
+	bx	lr
+	.endfunc
 
 #if defined(__linux__) && defined(__ELF__)
 	.section .note.GNU-stack,"",%progbits

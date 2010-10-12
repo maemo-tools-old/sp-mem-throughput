@@ -23,21 +23,60 @@
 
 #include "routine.h"
 
-void memread_neon_8(const void *, size_t);
-void memread_neon_16(const void *, size_t);
-void memread_neon_32(const void *, size_t);
-void memread_neon_64(const void *, size_t);
-void memread_neon_128(const void *, size_t);
+void read_vldm_8(const void *, size_t);
+void read_vldm_16(const void *, size_t);
+void read_vldm_32(const void *, size_t);
+void read_vldm_64(const void *, size_t);
+void read_vldm_128(const void *, size_t);
+void read_vldm_256(const void *, size_t);
 
-ROUTINE_REGISTER_MEMREAD(memread_neon_8,
-	"ARM NEON memread, 8 byte aligned reads")
-ROUTINE_REGISTER_MEMREAD(memread_neon_16,
-	"ARM NEON memread, 16 byte aligned reads")
-ROUTINE_REGISTER_MEMREAD(memread_neon_32,
-	"ARM NEON memread, 32 byte aligned reads")
-ROUTINE_REGISTER_MEMREAD(memread_neon_64,
-	"ARM NEON memread, 64 byte aligned reads")
-ROUTINE_REGISTER_MEMREAD(memread_neon_128,
-	"ARM NEON memread, 128 byte aligned reads")
+void read_vld1_8(const void *, size_t);
+void read_vld1_16(const void *, size_t);
+void read_vld1_32(const void *, size_t);
+void read_vld1_64(const void *, size_t);
+void read_vld1_128(const void *, size_t);
+void read_vld1_256(const void *, size_t);
+
+void read_vldm_pld_8(const void *, size_t);
+void read_vldm_pld_16(const void *, size_t);
+void read_vldm_pld_32(const void *, size_t);
+void read_vldm_pld_64(const void *, size_t);
+void read_vldm_pld_128(const void *, size_t);
+void read_vldm_pld_256(const void *, size_t);
+
+void read_vld1_pld_8(const void *, size_t);
+void read_vld1_pld_16(const void *, size_t);
+void read_vld1_pld_32(const void *, size_t);
+void read_vld1_pld_64(const void *, size_t);
+void read_vld1_pld_128(const void *, size_t);
+void read_vld1_pld_256(const void *, size_t);
+
+ROUTINE_REGISTER_MEMREAD(read_vldm_8,   "NEON VLDM, 8 byte reads")
+ROUTINE_REGISTER_MEMREAD(read_vldm_16,  "NEON VLDM, 16 byte reads")
+ROUTINE_REGISTER_MEMREAD(read_vldm_32,  "NEON VLDM, 32 byte reads")
+ROUTINE_REGISTER_MEMREAD(read_vldm_64,  "NEON VLDM, 64 byte reads")
+ROUTINE_REGISTER_MEMREAD(read_vldm_128, "NEON VLDM, 128 byte reads")
+ROUTINE_REGISTER_MEMREAD(read_vldm_256, "NEON VLDM, 256 byte reads")
+
+ROUTINE_REGISTER_MEMREAD(read_vld1_8,   "NEON VLD1, 8 byte aligned reads")
+ROUTINE_REGISTER_MEMREAD(read_vld1_16,  "NEON VLD1, 16 byte aligned reads")
+ROUTINE_REGISTER_MEMREAD(read_vld1_32,  "NEON VLD1, 32 byte aligned reads")
+ROUTINE_REGISTER_MEMREAD(read_vld1_64,  "NEON VLD1, 64 byte aligned reads")
+ROUTINE_REGISTER_MEMREAD(read_vld1_128, "NEON VLD1, 128 byte aligned reads")
+ROUTINE_REGISTER_MEMREAD(read_vld1_256, "NEON VLD1, 256 byte aligned reads")
+
+ROUTINE_REGISTER_MEMREAD(read_vldm_pld_8,   "NEON VLDM+PLD, 8 byte reads")
+ROUTINE_REGISTER_MEMREAD(read_vldm_pld_16,  "NEON VLDM+PLD, 16 byte reads")
+ROUTINE_REGISTER_MEMREAD(read_vldm_pld_32,  "NEON VLDM+PLD, 32 byte reads")
+ROUTINE_REGISTER_MEMREAD(read_vldm_pld_64,  "NEON VLDM+PLD, 64 byte reads")
+ROUTINE_REGISTER_MEMREAD(read_vldm_pld_128, "NEON VLDM+PLD, 128 byte reads")
+ROUTINE_REGISTER_MEMREAD(read_vldm_pld_256, "NEON VLDM+PLD, 256 byte reads")
+
+ROUTINE_REGISTER_MEMREAD(read_vld1_pld_8,   "NEON VLD1+PLD, 8 byte aligned reads")
+ROUTINE_REGISTER_MEMREAD(read_vld1_pld_16,  "NEON VLD1+PLD, 16 byte aligned reads")
+ROUTINE_REGISTER_MEMREAD(read_vld1_pld_32,  "NEON VLD1+PLD, 32 byte aligned reads")
+ROUTINE_REGISTER_MEMREAD(read_vld1_pld_64,  "NEON VLD1+PLD, 64 byte aligned reads")
+ROUTINE_REGISTER_MEMREAD(read_vld1_pld_128, "NEON VLD1+PLD, 128 byte aligned reads")
+ROUTINE_REGISTER_MEMREAD(read_vld1_pld_256, "NEON VLD1+PLD, 256 byte aligned reads")
 
 #endif /* __ARM_NEON__ */
