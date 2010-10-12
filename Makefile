@@ -72,8 +72,9 @@ endif
 sp-mem-throughput: $(COMMON_SRCS) $(ARCH_SRCS) $(ARCH_OBJS)
 	$(CC) $(CCFLAGS) $(LDFLAGS) $+ -o $@
 
-install: sp-mem-throughput
-	install -D $< $(DESTDIR)/usr/bin/$<
+install: sp-mem-throughput sp-mem-throughput.1
+	install -D sp-mem-throughput $(DESTDIR)/usr/bin/sp-mem-throughput
+	install -D sp-mem-throughput.1 $(DESTDIR)/usr/share/man/man1/sp-mem-throughput.1
 
 clean:
 	rm -f $(ARCH_OBJS) $(ARCH_CLEAN)

@@ -1,0 +1,100 @@
+.TH SP-MEM-THROUGHPUT 1 "2010-10-12"
+.SH NAME
+sp-mem-throughput - memory throughput testing suite
+.SH SYNOPSIS
+sp-mem-throughput [OPT...] <test type>
+.SH DESCRIPTION
+\fIsp-mem-throughput\fP is a testing suite for memory throughput achived by
+different kinds of memory access patterns, such as read only, write only or
+copy.
+.SH OPTIONS
+.TP
+\fB-L, --list\fP
+List available routines.
+.TP
+\fB-A, --all\fP
+Run all benchmarks.
+.TP
+\fB-d, --duration\fP=\fIN\fP
+For each function and every block size, the tested function is repeatedly
+called for a minimum duration of N milliseconds. Throughput is then calculated
+based on the number of function calls that were made and the precise CPU time
+it took.
+.TP
+\fB-r, --rounds\fP=\fIN\fP
+Repeat each benchmark N times.
+.TP
+\fB-b, --blocks\fP=\fIN\fP
+This parameter sets the number of bytes that are processed per function call.
+For example when benchmarking a memcpy() call, this sets the last parameter to
+N. Accepts multiple sizes, separated by comma, and ranges separated by a dash.
+.TP
+\fB-a, --align\fP=\fIN\fP
+Align buffer1 and buffer2 to N byte boundaries.
+.TP
+\fB--align1\fP=\fIN\fP
+Align buffer1 to N byte boundary.
+.TP
+\fB--align2\fP=\fIN\fP
+Align buffer2 to N byte boundary.
+.TP
+\fB--sliding-offset\fP=\fIN\fP
+For each function call, increment buffer1 (and buffer2) positions by N bytes.
+This incrementation wraps over at 256 bytes.
+.TP
+\fB--no-swap-buffers\fP
+By default, buffer1 and buffer2 pointers are swapped between each function
+call, eg. memcpy() bechmarks will copy 1->2, then 2->1, then 1->2 and so forth.
+This option can be used to disable the swapping. Only has effect if both of the
+buffers are allocated.
+.TP
+\fB--sliding-offset\fP=\fIFILE\fP
+Write results in CSV format to FILE. Default file name is
+\'sp-mem-throughput-<device>-<year>-<week>-<build>.csv\' for Maemo platforms
+that have the sysinfo client available, or \'sp-mem-throughput.csv\' otherwise.
+.TP
+\fB--memlock\fP
+Lock all memory to RAM.
+.TP
+\fB--validate\fP
+Validate results from each function.
+.TP
+\fB--no-banner\fP
+Do not print banner & headers at program launch.
+.SH EXAMPLES
+
+
+List available routines:
+.br
+	sp-mem-throughput -L
+.PP
+Run all benchmarks with default settings:
+.br
+	sp-mem-throughput -A
+.PP
+Run each benchmark from the memset category:
+.br
+	sp-mem-throughput memset
+.PP
+Run one benchmark 'memset_libc':
+.br
+	sp-mem-throughput memset_libc
+.PP
+Run one benchmark 'memset_libc' for 100 rounds, 300ms each:
+.br
+	sp-mem-throughput memset_libc -r100 -d300
+.PP
+Do not write a CSV file:
+.br
+	sp-mem-throughput --csv=/dev/null -A
+.PP
+Benchmark each routine from the memcpy category with 1-256 bytes:
+.br
+	sp-mem-throughput -b1-256 -d50 -r5 memcpy
+.PP
+Benchmark reading 1MB, 4MB and 32MB of data using two NEON routines:
+.br
+	sp-mem-throughput -b1MB,4MB,32MB memread_neon_32 memread_neon_64
+.PP
+.SH COPYRIGHT
+Copyright (C) 2004, 2010 by Nokia Corporation. Contact: Eero Tamminen <eero.tamminen@nokia.com>.
