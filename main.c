@@ -220,7 +220,8 @@ sigsegv_handler(int sig)
 	static const char errmsg1[] =
 		"\n"
 		"ERROR: SIGSEGV received while running routine '";
-	static const char errmsg2[] = "'.\n";
+	static const char errmsg2[] = "'.\n"
+		"****** 'ulimit -c 0' can be set to disable core dumps.\n\n";
 	unsigned len = handler_namelen();
 	if (len == 0) goto done;
 	if (write(STDERR_FILENO, errmsg1, sizeof(errmsg1)-1) < 0) goto done;
@@ -241,7 +242,8 @@ sigbus_handler(int sig)
 		"'.\n"
 		"****** This usually indicates unaligned memory access.\n"
 		"****** Try adjusting the parameters related to alignment"
-			" or block size.\n\n";
+			" or block size.\n"
+		"****** 'ulimit -c 0' can be set to disable core dumps.\n\n";
 	unsigned len = handler_namelen();
 	if (len == 0) goto done;
 	if (write(STDERR_FILENO, errmsg1, sizeof(errmsg1)-1) < 0) goto done;
