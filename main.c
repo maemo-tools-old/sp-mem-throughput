@@ -23,6 +23,7 @@
 
 #include "blocks.h"
 #include "cgroup-detect.h"
+#include "cpu.h"
 #include "csv.h"
 #include "routine.h"
 #include "sched-util.h"
@@ -42,9 +43,6 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
-
-void print_cpu_info(FILE *);
-int bind_to_one_cpu(void);
 
 static struct routine **routines;
 static unsigned routines_cnt;
@@ -926,6 +924,88 @@ memlock(void)
 		exit(1);
 	}
 }
+
+static void
+print_cpu_infos(FILE *stream)
+{
+	int i;
+	unsigned j, max_avail_freq;
+	cpu_set_t *proc_possible;
+	struct cpu_scaling *cs;
+	proc_possible = process_possible_cpuset();
+	if (!proc_possible) goto done;
+	for (i=0; i < CPU_SETSIZE; ++i) {
+		if (!CPU_ISSET(i, proc_possible)) continue;
+		cs = get_cpu_scaling(i);
+		if (!cs) continue;
+		fprintf(stream, "    CPU%d scaling:\n", i);
+		fprintf(stream, "       Frequencies: ");
+		for (j=0; j < cs->avail_freqs_cnt; ++j) {
+			if (cs->avail_freqs[j] == cs->max_freq)
+				fprintf(stream, "[");
+			if (j>0 && j < cs->avail_freqs_cnt)
+				fprintf(stream, ", ");
+			if (cs->avail_freqs[j] == cs->cur_freq) {
+				fprintf(stream, "*%uMHz*",
+					cs->avail_freqs[j] / 1000);
+			} else {
+				fprintf(stream, "%uMHz",
+					cs->avail_freqs[j] / 1000);
+			}
+			if (cs->avail_freqs[j] == cs->min_freq)
+				fprintf(stream, "]");
+		}
+		fprintf(stream, "\n");
+		fprintf(stream, "       Governors: ");
+		for (j=0; j < cs->avail_governors_cnt; ++j) {
+			if (j>0 && j < cs->avail_governors_cnt)
+				fprintf(stream, ", ");
+			if (strcmp(cs->avail_governors[j], cs->governor) == 0) {
+				fprintf(stream, "[%s]", cs->avail_governors[j]);
+			} else {
+				fprintf(stream, "%s", cs->avail_governors[j]);
+			}
+		}
+		fprintf(stream, "\n");
+		/* Generate a warning if there seems to be a possibility of CPU
+		 * frequency changes during testing. */
+		if (cs->avail_freqs_cnt > 0) {
+			max_avail_freq = cs->avail_freqs[0];
+			for (j=1; j < cs->avail_freqs_cnt; ++j) {
+				if (max_avail_freq > cs->avail_freqs[j])
+					max_avail_freq = cs->avail_freqs[j];
+			}
+			if (cs->cur_freq != cs->max_freq ||
+			    (strcmp(cs->governor, "performance") != 0 &&
+			     cs->max_freq != cs->min_freq)) {
+				fprintf(stderr, "WARNING: frequency changes "
+						"may alter results.\n");
+			}
+		}
+		free(cs->avail_freqs);
+		free(cs->avail_governors);
+		free(cs->driver);
+		free(cs->governor);
+		free(cs);
+	}
+done:
+	free(proc_possible);
+}
+
+static void
+print_cpu_info(FILE *stream)
+{
+	char *sys_possible_cpus, *proc_possible_cpus;
+	sys_possible_cpus = system_possible_cpus();
+	proc_possible_cpus = process_possible_cpus();
+	fprintf(stream, "CPU information:\n");
+	fprintf(stream, "    Possible CPUs in system: [IDs: %s]\n",
+			sys_possible_cpus ? : "<unknown>");
+	fprintf(stream, "    Possible CPUs for this process: [IDs: %s]\n",
+			proc_possible_cpus ? : "<unknown>");
+	print_cpu_infos(stream);
+}
+
 
 static void
 print_headers(void)
