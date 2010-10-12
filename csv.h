@@ -22,11 +22,11 @@
 #ifndef CSV_H
 #define CSV_H
 
+#include "routine.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include "routine.h"
 
 char *csv_get_default_name(void);
 int output_csv(const char *filename,
