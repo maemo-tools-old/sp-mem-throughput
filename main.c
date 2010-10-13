@@ -260,6 +260,19 @@ static void alarm_handler(int sig)
 	timerflag = sig;
 }
 
+/* Do we need two buffers for this routine? */
+static int
+routine_copies(struct routine *r)
+{
+	switch (r->type) {
+		case routine_memcpy: /* fall through */
+		case routine_strcpy:
+			return 1;
+		default:
+			return 0;
+	}
+}
+
 static inline void
 runner(struct routine *r)
 {
@@ -359,7 +372,7 @@ test_run(struct routine *r)
 			runner(r);
 			timing1 = get_time_us();
 			if (sliding_offset) {
-				if (no_swap_buffers==0 && buf2) {
+				if (no_swap_buffers==0 && routine_copies(r)) {
 					do {
 						runner(r);
 						++reps;
@@ -376,7 +389,7 @@ test_run(struct routine *r)
 					} while (timerflag == 0);
 				}
 			} else {
-				if (no_swap_buffers==0 && buf2) {
+				if (no_swap_buffers==0 && routine_copies(r)) {
 					do {
 						runner(r);
 						++reps;
@@ -827,8 +840,7 @@ allocate_arrays(void)
 	int need1=1, need2=0;
 	for (i=0; i < routines_cnt; ++i) {
 		if (!routines[i]->flagged) continue;
-		if (routines[i]->type == routine_memcpy) need2=1;
-		if (routines[i]->type == routine_strcpy) need2=1;
+		if (routine_copies(routines[i])) need2=1;
 	}
 	buf_len = block_sizes_largest+(2*4096);
 	if (sliding_offset) buf_len += 256;
