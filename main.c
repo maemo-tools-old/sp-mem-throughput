@@ -51,8 +51,8 @@ static char *buf1;
 static char *buf2;
 static size_t buf_len;
 static int no_swap_buffers;
-static unsigned repeats = 6;
-static unsigned duration = 200;
+static unsigned repeats = 5;
+static unsigned duration = 250;
 static int mem_pattern;
 static size_t align_src = 4096;
 static size_t align_dst = 4096;
@@ -170,11 +170,11 @@ print_measurement(struct routine *r)
 	float throughput;
 	unsigned i, j, b, rowcnt;
 	char bs[32];
-	printf("%-18s", r->name);
+	printf("%-23s", r->name);
 	block_size_iter_reset();
 	for (i=0; i < block_sizes_cnt; ++i) {
 		b = block_size_iter_next();
-		if (i) printf("%18s", "");
+		if (i) printf("%23s", "");
 		if (b >= 1024*1024) {
 			sprintf(bs, " B=%uMB", b/(1024*1024));
 		} else if (b >= 1024)      {
@@ -186,10 +186,10 @@ print_measurement(struct routine *r)
 		for (j=0, rowcnt=0; j < repeats; ++j) {
 			throughput = m_thr(&r->measurements[i*repeats+j], b);
 			if (printf("|%7.1f", throughput) <= 8) {
-				if (rowcnt < 5) printf(" ");
+				if (rowcnt < 4) printf(" ");
 			}
-			if (++rowcnt == 6 && j < repeats-1) {
-				printf("\n%27s", "");
+			if (++rowcnt == 5 && j < repeats-1) {
+				printf("\n%32s", "");
 				rowcnt = 0;
 			}
 		}
@@ -202,8 +202,8 @@ static void
 print_testcase_headers(FILE *stream)
 {
 	fprintf(stream,
-"Test case name    | Block  | Results (sorted): throughput in MB/s.\n"
-"                  | size B | B=block size in bytes. (MB=1024*1024)\n");
+"Test case name   | B=block size | Results (sorted): throughput in MB/s.\n"
+"                 | in bytes     | (MB=1024*1024)\n");
 }
 
 static unsigned
@@ -322,6 +322,8 @@ prepare_buffers(struct routine *r)
 	}
 }
 
+#define OUTPUT_WIDTH 76
+
 static void
 test_run(struct routine *r)
 {
@@ -401,14 +403,14 @@ test_run(struct routine *r)
 		qsort(&r->measurements[i*repeats], repeats,
 				sizeof(struct measurement),
 				measurement_cmp);
-		if (block_sizes_cnt < 80 ||
-		    (i % ((block_sizes_cnt / 80)+1) == 0)) {
+		if (block_sizes_cnt < OUTPUT_WIDTH ||
+		    (i % ((block_sizes_cnt / OUTPUT_WIDTH)+1) == 0)) {
 			printf("-"); ++d;
 		}
 		fflush(stdout);
 		usleep(2000);
 	}
-	for (; d < 80; ++d) printf("-");
+	for (; d < OUTPUT_WIDTH; ++d) printf("-");
 	printf("\n");
 	print_measurement(r);
 }
