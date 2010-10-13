@@ -31,6 +31,7 @@ ARCH_OBJS += arch/arm/linux-arm-memmove.o
 ARCH_OBJS += arch/arm/linux-arm-memset.o
 ARCH_OBJS += arch/arm/arm-asm-routines.o
 ARCH_OBJS += arch/arm/memset-neon.o
+ARCH_OBJS += arch/arm/memset-neon-pld.o
 ARCH_OBJS += arch/arm/memread-neon.o
 ARCH_OBJS += arch/arm/memcpy-neon.o
 ARCH_OBJS += arch/arm/memcpy-neon-unaligned.o
@@ -53,6 +54,9 @@ ARCH_SRCS += arch/arm/directfb-memcpy.c
 ARCH_SRCS += arch/arm/code-aurora-forum-register.c
 ARCH_SRCS += arch/arm/android-register.c
 ARCH_SRCS += arch/arm/memcpy-aligned-register.c
+
+arch/arm/%-pld.o: arch/arm/%.S
+	$(CC) $(CCFLAGS) -DPLD -c $< -o $@
 
 arch/arm/memcpy-neon-unaligned.o: arch/arm/memcpy-neon.S
 	$(CC) $(CCFLAGS) -DENABLE_UNALIGNED_MEM_ACCESSES -c $< -o $@
