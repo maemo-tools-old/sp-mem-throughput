@@ -101,7 +101,7 @@ system_possible_cpuset(void)
 	long cpu1, cpu2;
 	line = readfile("/sys/devices/system/cpu/possible");
 	if (!line) goto error;
-	ret = CPU_ALLOC(CPU_SETSIZE);
+	ret = malloc(sizeof(cpu_set_t));
 	if (!ret) goto error;
 	while (*line) {
 		errno = 0;
@@ -125,7 +125,7 @@ system_possible_cpuset(void)
 	}
 	return ret;
 error:
-	if (ret) CPU_FREE(ret);
+	if (ret) free(ret);
 	return NULL;
 }
 
@@ -133,12 +133,12 @@ cpu_set_t *
 process_possible_cpuset(void)
 {
 	cpu_set_t *ret;
-	ret = CPU_ALLOC(CPU_SETSIZE);
+	ret = malloc(sizeof(cpu_set_t));
 	if (!ret) goto error;
 	if (sched_getaffinity(0, sizeof(cpu_set_t), ret) < 0) goto error;
 	return ret;
 error:
-	if (ret) CPU_FREE(ret);
+	if (ret) free(ret);
 	return NULL;
 }
 
