@@ -626,7 +626,7 @@ usage(const char *prog)
 #ifdef __ARM_NEON__
 "\n"
 "   # Benchmark reading 1MB, 4MB and 32MB of data using two NEON routines:\n"
-"   %s -b1MB,4MB,32MB memread_neon_32 memread_neon_64\n"
+"   %s -b1MB,4MB,32MB read_vldm_32 read_vld1_32\n"
 , base
 #endif /* __ARM_NEON__ */
 , base, base, base, base, base, base, base
