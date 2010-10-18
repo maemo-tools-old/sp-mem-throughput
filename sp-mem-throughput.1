@@ -7,13 +7,93 @@ sp-mem-throughput [OPT...] <test type>
 \fIsp-mem-throughput\fP is a testing suite for memory throughput achived by
 different kinds of memory access patterns, such as read only, write only or
 copy.
+.SH CONSOLE OUTPUT EXPLANATION
+\fIsp-mem-throughput\fP produces results on the screen and in CSV file format.
+The screen output format is explained here.
+
+.SS COMMAND LINE AND VERSION NUMBER
+Here, we are benchmarking the \fBmemset\fP() routine from the C library using
+\fIsp-mem-throughput\fP default settings. This example output was produced by
+version 0.1.
+
+    # ./sp-mem-throughput memset_libc
+    sp-mem-throughput: memory performance test suite v0.1
+
+.SS SCHEDULING INFORMATION
+\fIsp-mem-throughput\fP raises priority to maximum possible on startup to
+obtain predictable results. In this case, it was able to raise the niceness to
+-20. \fIsp-mem-throughput\fP also tries to set the scheduling policy to real
+time, but here it did not succeed.
+
+    Scheduling information:
+        Priority: -20 [highest: -20, lowest: 19]
+        Scheduling policy: SCHED_OTHER
+        Scheduling priority: 0 [highest: 0, lowest:0]
+
+.SS CPU INFORMATION
+In this system we have one cpu, and \fIsp-mem-throughput\fP is executed on that
+one. The CPU scaling governor is set to \fIondemand\fP, which may distort the
+results. Setting the governor to \fBperformance\fP is recommended.
+
+    CPU information:
+        Possible CPUs in system: [IDs: 0]
+        Possible CPUs for this process: [IDs: 0]
+        CPU0 scaling:
+           Frequencies: [1000MHz, 800MHz, *600MHz*], 300MHz
+           Governors: userspace, [ondemand], performance
+
+    WARNING: frequency changes may alter results.
+
+.SS TEST CASE INFORMATION
+Information about the test execution is reported on the screen. Here we see
+that each measurement is obtained by executing the routine for 250
+milliseconds, and each measurement is repeated five (5) times. We can also see
+that only one buffer is allocated, and it is aligned to 4096 bytes.
+
+    Test case information:
+        Duration for one measurement: 250 ms
+        How many times each measurement is repeated: 5
+        Write/search byte pattern: 0x00
+        buffer1: 0x3ac75000-0x3b677000 [10493952 bytes, alignment: 4096 bytes]
+        Memory locked to RAM: no
+        Estimated run time: < 1 minute
+
+    WARNING: running under a resource Control Group!
+    /proc/self/cgroup: '1:freezer,memory,cpu:/system/applications/standby'
+
+.SS CONSOLE RESULTS
+Each routine is now executed, and the results are reported on the screen.  For
+each block size B (8 bytes, 16 bytes, 32 bytes, ..., 10 megabytes), we get five
+(5) measurements. In the B=8 case, the results show performance that ranges
+from 86.0 megabytes per second to 143.5 megabytes per second.
+
+    Test case name   | B=block size | Results (sorted): throughput in MB/s.
+                     | in bytes     | (MB=1024*1024)
+    ----------------------------------------------------------------------------
+    memset_libc             B=8     |   86.0 |   97.8 |  143.0 |  143.3 |  143.5
+                            B=16    |  225.6 |  226.5 |  226.9 |  226.9 |  227.0
+                            B=32    |  421.8 |  422.5 |  422.9 |  422.9 |  422.9
+                            B=64    |  674.8 |  676.2 |  676.3 |  676.6 |  676.7
+                            B=128   |  995.4 |  996.1 |  997.8 |  998.5 |  998.8
+                            B=256   | 1189.3 | 1193.9 | 1194.7 | 1198.4 | 1198.5
+                            B=1KB   | 1372.4 | 1378.0 | 1378.9 | 1379.6 | 1381.7
+                            B=4KB   | 1421.9 | 1425.5 | 1426.0 | 1426.3 | 1426.5
+                            B=8KB   | 1406.1 | 1409.2 | 1409.3 | 1410.2 | 1410.3
+                            B=64KB  | 1414.5 | 1416.6 | 1419.2 | 1419.3 | 1419.4
+                            B=1MB   | 1409.6 | 1422.4 | 1424.9 | 1425.2 | 1425.2
+                            B=10MB  | 1410.4 | 1419.6 | 1421.2 | 1421.4 | 1421.4
+
+.SS CSV RESULTS
+Results are also written out in CSV file format.
+
+    Writing results in CSV format: sp-mem-throughput.csv
 .SH OPTIONS
 .TP
 \fB-L, --list\fP
 List available routines.
 .TP
 \fB-A, --all\fP
-Run all benchmarks.
+Run all routines.
 .TP
 \fB-d, --duration\fP=\fIN\fP
 For each function and every block size, the tested function is repeatedly
@@ -48,19 +128,24 @@ call, eg. memcpy() bechmarks will copy 1->2, then 2->1, then 1->2 and so forth.
 This option can be used to disable the swapping. Only has effect if both of the
 buffers are allocated.
 .TP
-\fB--sliding-offset\fP=\fIFILE\fP
+\fB--csv\fP=\fIFILE\fP
 Write results in CSV format to FILE. Default file name is
 \'sp-mem-throughput-<device>-<year>-<week>-<build>.csv\' for Maemo platforms
 that have the sysinfo client available, or \'sp-mem-throughput.csv\' otherwise.
 .TP
 \fB--memlock\fP
-Lock all memory to RAM.
+Lock all memory to RAM with \fBmlockall(MCL_CURRENT|MCL_FUTURE)\fP. By default,
+memory is \fInot\fP locked. Using this option usually requires superuser
+priviledges. If the \fBmlockall\fP() call fails, \fIsp-mem-throughput\fP will
+report an error and exit.
 .TP
 \fB--validate\fP
-Validate results from each function.
+Run a separate routine validation checking the correctness of available
+routines. Some routines, for example those in the \fImemread\fP category, are
+not checked.
 .TP
 \fB--no-banner\fP
-Do not print banner & headers at program launch.
+Less verbose output: do not print banner & headers at program launch.
 .SH EXAMPLES
 
 
@@ -90,11 +175,11 @@ Do not write a CSV file:
 .PP
 Benchmark each routine from the memcpy category with 1-256 bytes:
 .br
-	sp-mem-throughput -b1-256 -d50 -r5 memcpy
+	sp-mem-throughput -b1-256 -d50 memcpy
 .PP
 Benchmark reading 1MB, 4MB and 32MB of data using two NEON routines:
 .br
-	sp-mem-throughput -b1MB,4MB,32MB memread_neon_32 memread_neon_64
+	sp-mem-throughput -b1MB,4MB,32MB read_vldm_32 read_vld1_32
 .PP
 .SH COPYRIGHT
 Copyright (C) 2004, 2010 by Nokia Corporation. Contact: Eero Tamminen <eero.tamminen@nokia.com>.
