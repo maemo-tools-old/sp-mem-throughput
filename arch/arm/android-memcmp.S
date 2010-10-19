@@ -284,3 +284,7 @@ android_memcmp:
         mov         r2, #4
 		ldmfd		sp!, {r5, r6, r7}
         b           8b
+
+#if defined(__linux__) && defined(__ELF__)
+	.section .note.GNU-stack,"",%progbits
+#endif

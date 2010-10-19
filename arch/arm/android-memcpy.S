@@ -506,3 +506,7 @@ copy_last_3_and_return:
 
 
 #endif    /* __ARM_ARCH__ < 7 */
+
+#if defined(__linux__) && defined(__ELF__)
+	.section .note.GNU-stack,"",%progbits
+#endif

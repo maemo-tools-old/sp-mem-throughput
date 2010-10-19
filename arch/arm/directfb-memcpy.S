@@ -409,3 +409,7 @@ _LABEL(Lmemcpy_bsrcul1l4)
 	b Lmemcpy_bl4
 
 	.ltorg
+
+#if defined(__linux__) && defined(__ELF__)
+	.section .note.GNU-stack,"",%progbits
+#endif

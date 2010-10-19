@@ -107,4 +107,7 @@ android_memset:
         ldmfd		sp!, {r0, r4-r7, lr}
         bx          lr
         .fnend
-    
+
+#if defined(__linux__) && defined(__ELF__)
+	.section .note.GNU-stack,"",%progbits
+#endif
