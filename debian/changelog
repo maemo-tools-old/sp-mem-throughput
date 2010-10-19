@@ -1,3 +1,11 @@
+sp-mem-throughput (0.2) unstable; urgency=low
+
+  * Include memset() routine from the cortex-strings / Linaro project.
+  * Extend manual page: explain the console output.
+  * Fix executable stack.
+
+ -- Tommi Rantala <ext-tommi.1.rantala@nokia.com>  Tue, 19 Oct 2010 09:41:59 +0300
+
 sp-mem-throughput (0.1) unstable; urgency=low
 
   * Initial version of sp-mem-throughput released. Fixes: NB#96440
