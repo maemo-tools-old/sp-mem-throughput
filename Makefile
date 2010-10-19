@@ -45,6 +45,7 @@ ARCH_OBJS += arch/arm/android-strlen.o
 ARCH_OBJS += arch/arm/memcpy-aligned-arm.o
 ARCH_OBJS += arch/arm/memcpy-aligned-neon.o
 ARCH_OBJS += arch/arm/memcpy-aligned-arm-neon.o
+ARCH_OBJS += arch/arm/linaro-memset.o
 
 ARCH_SRCS += arch/arm/*-register.c
 
