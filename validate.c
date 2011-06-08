@@ -212,8 +212,11 @@ validate_all(struct routine **routines,
 			continue;
 		}
 		if (ret == 0) {
-			printf(" OK!\n"); fflush(stdout);
+			printf(" OK!\n");
+		} else {
+			printf(" FAILED!\n");
 		}
+		fflush(stdout);
 		failures += ret;
 	}
 	printf("\n");
