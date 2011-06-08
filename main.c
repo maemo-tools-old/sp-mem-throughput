@@ -268,7 +268,8 @@ routine_copies(struct routine *r)
 		case routine_memcpy: /* fall through */
 		case routine_strcmp: /* fall through */
 		case routine_strncmp:/* fall through */
-		case routine_strcpy:
+		case routine_strcpy: /* fall through */
+		case routine_strncpy:
 			return 1;
 		default:
 			return 0;
@@ -293,6 +294,9 @@ runner(struct routine *r)
 		return;
 	case routine_strcpy:
 		r->fn.strcpy_(&buf2[offset], &buf1[offset]);
+		return;
+	case routine_strncpy:
+		r->fn.strncpy_(&buf2[offset], &buf1[offset], block_size);
 		return;
 	case routine_strlen:
 		r->fn.strlen_(&buf1[offset]);
@@ -335,6 +339,7 @@ prepare_buffers(struct routine *r)
 	case routine_strcmp: /* fall through */
 	case routine_strncmp:/* fall through */
 	case routine_strcpy: /* fall through */
+	case routine_strncpy:/* fall through */
 	case routine_strlen:
 		memset(&buf1[offset], ~(unsigned)mem_pattern, block_size-1);
 		buf1[offset+block_size-1] = 0;

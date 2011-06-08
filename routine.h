@@ -32,6 +32,7 @@ enum routine_type {
 	routine_memset,
 	routine_memcpy,
 	routine_strcpy,
+	routine_strncpy,
 	routine_strlen,
 	routine_strcmp,
 	routine_strncmp,
@@ -49,6 +50,7 @@ struct routine {
 		void *(*memset_)(void *, int, size_t);
 		void *(*memcpy_)(void *restrict, const void *restrict, size_t);
 		char *(*strcpy_)(char *, const char *);
+		char *(*strncpy_)(char *, const char *, size_t);
 		size_t (*strlen_)(const char *);
 		int (*strcmp_)(const char *, const char *);
 		int (*strncmp_)(const char *, const char *, size_t);
@@ -90,6 +92,9 @@ void routine_register(struct routine *);
 
 #define ROUTINE_REGISTER_STRCPY(_func, _desc)\
 	ROUTINE_REGISTER(_func, strcpy, #_func, _desc)
+
+#define ROUTINE_REGISTER_STRNCPY(_func, _desc)\
+	ROUTINE_REGISTER(_func, strncpy, #_func, _desc)
 
 #define ROUTINE_REGISTER_STRLEN(_func, _desc)\
 	ROUTINE_REGISTER(_func, strlen, #_func, _desc)

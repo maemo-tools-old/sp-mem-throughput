@@ -136,6 +136,42 @@ validate_strcpy_routine(struct routine *r, char *buf1, char *buf2)
 }
 
 static unsigned
+validate_strncpy_routine(struct routine *r, char *buf1, char *buf2)
+{
+	unsigned j, b, k, ret=0;
+	for (j=0; j < block_sizes_cnt; ++j) {
+		b = block_size_iter_next();
+		for (k=0; k < b; ++k) {
+			buf1[k] = 'x';
+			buf2[k] = 'y';
+		}
+		buf1[b-1] = 0;
+		r->fn.strncpy_(buf2, buf1, b);
+		for (k=0; k < b-1; ++k) {
+			if (buf2[k] != 'x') {
+				fprintf(stderr,
+					"ERROR: %s() failed validation"
+					" [buf2[%zd]==%c].\n",
+					r->name, k, buf2[k]);
+				fflush(stderr);
+				++ret;
+				break;
+			}
+		}
+		if (buf2[b-1] != 0) {
+			fprintf(stderr,
+				"ERROR: %s() failed validation"
+				" [buf2[%zd]==%x].\n",
+				r->name, b-1, buf2[b-1]);
+			fflush(stderr);
+			++ret;
+			break;
+		}
+	}
+	return ret;
+}
+
+static unsigned
 validate_strcmp_routine(struct routine *r, char *buf1, char *buf2)
 {
 	(void)buf2;
@@ -210,6 +246,7 @@ static unsigned (*const validators[routine_types_count])(struct routine *,
 	[routine_memcpy] = validate_memcpy_routine,
 	[routine_strlen] = validate_strlen_routine,
 	[routine_strcpy] = validate_strcpy_routine,
+	[routine_strncpy] = validate_strncpy_routine,
 	[routine_strcmp] = validate_strcmp_routine,
 	[routine_strncmp] = validate_strncmp_routine,
 	[routine_strchr] = validate_strchr_routine,

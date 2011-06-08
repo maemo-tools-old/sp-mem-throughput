@@ -47,6 +47,10 @@ static const struct {
 		"strcpy",
 		"Treat buffer1 as a string, copy to buffer2.",
 	},
+	[routine_strncpy] = {
+		"strncpy",
+		"Treat buffer1 as a string, copy all bytes to buffer2.",
+	},
 	[routine_strlen] = {
 		"strlen",
 		"Treat buffer1 as a string, calculate length.",
