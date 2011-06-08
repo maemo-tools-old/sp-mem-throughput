@@ -27,8 +27,9 @@
 #include <stdio.h>
 
 static unsigned
-validate_memset_routine(struct routine *r, char *buf1)
+validate_memset_routine(struct routine *r, char *buf1, char *buf2)
 {
+	(void)buf2;
 	unsigned j, k, b, ret=0;
 	for (j=0; j < block_sizes_cnt; ++j) {
 		b = block_size_iter_next();
@@ -74,8 +75,9 @@ validate_memcpy_routine(struct routine *r, char *buf1, char *buf2)
 }
 
 static unsigned
-validate_strlen_routine(struct routine *r, char *buf1)
+validate_strlen_routine(struct routine *r, char *buf1, char *buf2)
 {
+	(void)buf2;
 	size_t l;
 	unsigned j, k, b, ret=0;
 	for (j=0; j < block_sizes_cnt; ++j) {
@@ -134,8 +136,9 @@ validate_strcpy_routine(struct routine *r, char *buf1, char *buf2)
 }
 
 static unsigned
-validate_strcmp_routine(struct routine *r, char *buf1)
+validate_strcmp_routine(struct routine *r, char *buf1, char *buf2)
 {
+	(void)buf2;
 	int ret;
 	unsigned j, b, failed=0;
 	for (j=0; j < block_sizes_cnt; ++j) {
@@ -156,8 +159,9 @@ validate_strcmp_routine(struct routine *r, char *buf1)
 }
 
 static unsigned
-validate_strncmp_routine(struct routine *r, char *buf1)
+validate_strncmp_routine(struct routine *r, char *buf1, char *buf2)
 {
+	(void)buf2;
 	int ret;
 	unsigned j, b, failed=0;
 	for (j=0; j < block_sizes_cnt; ++j) {
@@ -177,6 +181,16 @@ validate_strncmp_routine(struct routine *r, char *buf1)
 	return failed;
 }
 
+static unsigned (*const validators[routine_types_count])(struct routine *,
+		char *, char *) = {
+	[routine_memset] = validate_memset_routine,
+	[routine_memcpy] = validate_memcpy_routine,
+	[routine_strlen] = validate_strlen_routine,
+	[routine_strcpy] = validate_strcpy_routine,
+	[routine_strcmp] = validate_strcmp_routine,
+	[routine_strncmp] = validate_strncmp_routine,
+};
+
 unsigned
 validate_all(struct routine **routines,
              unsigned routines_cnt,
@@ -190,18 +204,9 @@ validate_all(struct routine **routines,
 		printf("- %-20s ...", routines[i]->name); fflush(stdout);
 		ret = 0;
 		block_size_iter_reset();
-		if (routines[i]->type == routine_memset) {
-			ret = validate_memset_routine(routines[i], buf1);
-		} else if (routines[i]->type == routine_memcpy) {
-			ret = validate_memcpy_routine(routines[i], buf1, buf2);
-		} else if (routines[i]->type == routine_strlen) {
-			ret = validate_strlen_routine(routines[i], buf1);
-		} else if (routines[i]->type == routine_strcpy) {
-			ret = validate_strcpy_routine(routines[i], buf1, buf2);
-		} else if (routines[i]->type == routine_strcmp) {
-			ret = validate_strcmp_routine(routines[i], buf1);
-		} else if (routines[i]->type == routine_strncmp) {
-			ret = validate_strncmp_routine(routines[i], buf1);
+		if (validators[routines[i]->type] != NULL) {
+			ret = validators[routines[i]->type](routines[i],
+				buf1, buf2);
 		} else {
 			printf(" SKIPPED VALIDATION.\n"); fflush(stdout);
 			continue;
