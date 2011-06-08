@@ -59,6 +59,10 @@ static const struct {
 		"strncmp",
 		"Treat buffer1 and buffer2 as strings, compare all bytes.",
 	},
+	[routine_strchr] = {
+		"strchr",
+		"Treat buffer1 as a string, search for character.",
+	},
 };
 
 const char *

@@ -181,6 +181,29 @@ validate_strncmp_routine(struct routine *r, char *buf1, char *buf2)
 	return failed;
 }
 
+static unsigned
+validate_strchr_routine(struct routine *r, char *buf1, char *buf2)
+{
+	(void)buf2;
+	char *ret;
+	unsigned j, b, failed=0;
+	for (j=0; j < block_sizes_cnt; ++j) {
+		b = block_size_iter_next();
+		memset(buf1, 0x33, b-1);
+		buf1[b-1] = 0;
+		ret = r->fn.strchr_(buf1, 0x44);
+		if (ret != NULL) {
+			fprintf(stderr, "ERROR: %s() failed validation"
+					" [got: %p, expected: NULL].\n",
+				r->name, ret);
+			fflush(stderr);
+			++failed;
+			break;
+		}
+	}
+	return failed;
+}
+
 static unsigned (*const validators[routine_types_count])(struct routine *,
 		char *, char *) = {
 	[routine_memset] = validate_memset_routine,
@@ -189,6 +212,7 @@ static unsigned (*const validators[routine_types_count])(struct routine *,
 	[routine_strcpy] = validate_strcpy_routine,
 	[routine_strcmp] = validate_strcmp_routine,
 	[routine_strncmp] = validate_strncmp_routine,
+	[routine_strchr] = validate_strchr_routine,
 };
 
 unsigned

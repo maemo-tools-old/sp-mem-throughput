@@ -303,6 +303,9 @@ runner(struct routine *r)
 	case routine_strncmp:
 		r->fn.strncmp_(&buf1[offset], &buf2[offset], block_size);
 		return;
+	case routine_strchr:
+		r->fn.strchr_(&buf1[offset], mem_pattern);
+		return;
 	default:
 		abort();
 	}
@@ -328,6 +331,7 @@ prepare_buffers(struct routine *r)
 		if (buf2) memset(&buf2[offset], ~(unsigned)mem_pattern,
 				block_size);
 		break;
+	case routine_strchr: /* fall through */
 	case routine_strcmp: /* fall through */
 	case routine_strncmp:/* fall through */
 	case routine_strcpy: /* fall through */

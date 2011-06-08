@@ -35,6 +35,7 @@ enum routine_type {
 	routine_strlen,
 	routine_strcmp,
 	routine_strncmp,
+	routine_strchr,
 	routine_types_count
 };
 
@@ -51,6 +52,7 @@ struct routine {
 		size_t (*strlen_)(const char *);
 		int (*strcmp_)(const char *, const char *);
 		int (*strncmp_)(const char *, const char *, size_t);
+		char *(*strchr_)(const char *, int);
 	} fn;
 	const char *name;
 	const char *desc;
@@ -97,6 +99,9 @@ void routine_register(struct routine *);
 
 #define ROUTINE_REGISTER_STRNCMP(_func, _desc)\
 	ROUTINE_REGISTER(_func, strncmp, #_func, _desc)
+
+#define ROUTINE_REGISTER_STRCHR(_func, _desc)\
+	ROUTINE_REGISTER(_func, strchr, #_func, _desc)
 
 double m_thr(const struct measurement *, unsigned block_size);
 
