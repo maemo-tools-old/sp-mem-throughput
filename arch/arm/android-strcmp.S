@@ -27,12 +27,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <machine/cpu-features.h>
-
 	.text
 
-	.global strcmp
-	.type strcmp, %function
+	.global android_strcmp
+	.type android_strcmp, %function
 	.align 4
 
 #ifdef __ARMEB__
@@ -54,10 +52,10 @@
 #define magic1(REG) REG
 #define magic2(REG) REG, lsl #7
 
-strcmp:
+android_strcmp:
 	.fnstart
-	PLD(r0, #0)
-	PLD(r1, #0)
+	pld     [r0, #0]
+	pld     [r1, #0]
 	eor	r2, r0, r1
 	tst	r2, #3
 
@@ -92,8 +90,8 @@ strcmp:
 	orr	r4, r4, r4, lsl #16
 	.p2align	2
 4:
-	PLD(r0, #8)
-	PLD(r1, #8)
+	pld     [r0, #8]
+	pld     [r1, #8]
 	sub	r2, ip, magic1(r4)
 	cmp	ip, r3
 	itttt	eq
@@ -319,3 +317,7 @@ strcmp:
 	ldr	r4, [sp], #4
 	ldr	r5, [sp], #4
 	bx	lr
+
+#if defined(__linux__) && defined(__ELF__)
+	.section .note.GNU-stack,"",%progbits
+#endif
