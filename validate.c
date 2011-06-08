@@ -32,7 +32,7 @@ validate_memset_routine(struct routine *r, char *buf1)
 	for (j=0; j < block_sizes_cnt; ++j) {
 		b = block_size_iter_next();
 		for (k=0; k < b; ++k) buf1[k] = 0x11;
-		r->fn.memset(buf1, 0x22, b);
+		r->fn.memset_(buf1, 0x22, b);
 		for (k=0; k < b; ++k) {
 			if (buf1[k] != 0x22) {
 				fprintf(stderr, "ERROR: %s() failed"
@@ -57,7 +57,7 @@ validate_memcpy_routine(struct routine *r, char *buf1, char *buf2)
 			buf1[k] = 0x33;
 			buf2[k] = 0x44;
 		}
-		r->fn.memcpy(buf2, buf1, b);
+		r->fn.memcpy_(buf2, buf1, b);
 		for (k=0; k < b; ++k) {
 			if (buf2[k] != 0x33) {
 				fprintf(stderr, "ERROR: %s() failed"
@@ -83,7 +83,7 @@ validate_strlen_routine(struct routine *r, char *buf1)
 			buf1[k] = 0x33;
 		}
 		buf1[b-1] = 0;
-		l = r->fn.strlen(buf1);
+		l = r->fn.strlen_(buf1);
 		if (l != b-1) {
 			fprintf(stderr, "ERROR: %s() failed validation"
 					" [got: %zd, expected: %zd].\n",
@@ -107,7 +107,7 @@ validate_strcpy_routine(struct routine *r, char *buf1, char *buf2)
 			buf2[k] = 'y';
 		}
 		buf1[b-1] = 0;
-		r->fn.strcpy(buf2, buf1);
+		r->fn.strcpy_(buf2, buf1);
 		for (k=0; k < b-1; ++k) {
 			if (buf2[k] != 'x') {
 				fprintf(stderr,

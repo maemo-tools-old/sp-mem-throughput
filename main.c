@@ -278,22 +278,22 @@ runner(struct routine *r)
 {
 	switch (r->type) {
 	case routine_memread:
-		r->fn.memread(&buf1[offset], block_size);
+		r->fn.memread_(&buf1[offset], block_size);
 		return;
 	case routine_memchr:
-		r->fn.memchr(&buf1[offset], mem_pattern, block_size);
+		r->fn.memchr_(&buf1[offset], mem_pattern, block_size);
 		return;
 	case routine_memset:
-		r->fn.memset(&buf1[offset], mem_pattern, block_size);
+		r->fn.memset_(&buf1[offset], mem_pattern, block_size);
 		return;
 	case routine_memcpy:
-		r->fn.memcpy(&buf2[offset], &buf1[offset], block_size);
+		r->fn.memcpy_(&buf2[offset], &buf1[offset], block_size);
 		return;
 	case routine_strcpy:
-		r->fn.strcpy(&buf2[offset], &buf1[offset]);
+		r->fn.strcpy_(&buf2[offset], &buf1[offset]);
 		return;
 	case routine_strlen:
-		r->fn.strlen(&buf1[offset]);
+		r->fn.strlen_(&buf1[offset]);
 		return;
 	default:
 		abort();

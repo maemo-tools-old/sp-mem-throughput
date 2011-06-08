@@ -41,12 +41,12 @@ const char *rtype_desc(enum routine_type);
 
 struct routine {
 	union {
-		void (*memread)(const void *, size_t);
-		void *(*memchr)(const void *, int, size_t);
-		void *(*memset)(void *, int, size_t);
-		void *(*memcpy)(void *restrict, const void *restrict, size_t);
-		char *(*strcpy)(char *, const char *);
-		size_t (*strlen)(const char *);
+		void (*memread_)(const void *, size_t);
+		void *(*memchr_)(const void *, int, size_t);
+		void *(*memset_)(void *, int, size_t);
+		void *(*memcpy_)(void *restrict, const void *restrict, size_t);
+		char *(*strcpy_)(char *, const char *);
+		size_t (*strlen_)(const char *);
 	} fn;
 	const char *name;
 	const char *desc;
@@ -62,7 +62,7 @@ void routine_register(struct routine *);
 
 #define ROUTINE_REGISTER(_f, _t, _n, _d)\
 	static struct routine _f##_routine =\
-		{ .fn._t = (_f),\
+		{ .fn._t##_ = (_f),\
 		  .type = routine_##_t,\
 		  .name = _n,\
 		  .desc = _d }; \
