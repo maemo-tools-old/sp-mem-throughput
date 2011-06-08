@@ -1,6 +1,6 @@
 /* This file is part of sp-mem-throughput.
  *
- * Copyright (C) 2004, 2010 by Nokia Corporation
+ * Copyright (C) 2004, 2010-2011 by Nokia Corporation
  *
  * Authors: Tommi Rantala, Simo Piiroinen
  * Contact: Eero Tamminen <eero.tamminen@nokia.com>
@@ -266,6 +266,8 @@ routine_copies(struct routine *r)
 {
 	switch (r->type) {
 		case routine_memcpy: /* fall through */
+		case routine_strcmp: /* fall through */
+		case routine_strncmp:/* fall through */
 		case routine_strcpy:
 			return 1;
 		default:
@@ -295,6 +297,12 @@ runner(struct routine *r)
 	case routine_strlen:
 		r->fn.strlen_(&buf1[offset]);
 		return;
+	case routine_strcmp:
+		r->fn.strcmp_(&buf1[offset], &buf2[offset]);
+		return;
+	case routine_strncmp:
+		r->fn.strncmp_(&buf1[offset], &buf2[offset], block_size);
+		return;
 	default:
 		abort();
 	}
@@ -320,6 +328,8 @@ prepare_buffers(struct routine *r)
 		if (buf2) memset(&buf2[offset], ~(unsigned)mem_pattern,
 				block_size);
 		break;
+	case routine_strcmp: /* fall through */
+	case routine_strncmp:/* fall through */
 	case routine_strcpy: /* fall through */
 	case routine_strlen:
 		memset(&buf1[offset], ~(unsigned)mem_pattern, block_size-1);

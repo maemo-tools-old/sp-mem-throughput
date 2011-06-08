@@ -1,6 +1,6 @@
 /* This file is part of sp-mem-throughput.
  *
- * Copyright (C) 2010 by Nokia Corporation
+ * Copyright (C) 2010-2011 by Nokia Corporation
  *
  * Authors: Tommi Rantala
  * Contact: Eero Tamminen <eero.tamminen@nokia.com>
@@ -23,6 +23,7 @@
 #include "routine.h"
 #include "validate.h"
 
+#include <string.h>
 #include <stdio.h>
 
 static unsigned
@@ -132,6 +133,50 @@ validate_strcpy_routine(struct routine *r, char *buf1, char *buf2)
 	return ret;
 }
 
+static unsigned
+validate_strcmp_routine(struct routine *r, char *buf1)
+{
+	int ret;
+	unsigned j, b, failed=0;
+	for (j=0; j < block_sizes_cnt; ++j) {
+		b = block_size_iter_next();
+		memset(buf1, 0x33, b-1);
+		buf1[b-1] = 0;
+		ret = r->fn.strcmp_(buf1, buf1);
+		if (ret != 0) {
+			fprintf(stderr, "ERROR: %s() failed validation"
+					" [got: %d, expected: 0].\n",
+				r->name, ret);
+			fflush(stderr);
+			++failed;
+			break;
+		}
+	}
+	return failed;
+}
+
+static unsigned
+validate_strncmp_routine(struct routine *r, char *buf1)
+{
+	int ret;
+	unsigned j, b, failed=0;
+	for (j=0; j < block_sizes_cnt; ++j) {
+		b = block_size_iter_next();
+		memset(buf1, 0x33, b-1);
+		buf1[b-1] = 0;
+		ret = r->fn.strncmp_(buf1, buf1, b);
+		if (ret != 0) {
+			fprintf(stderr, "ERROR: %s() failed validation"
+					" [got: %d, expected: 0].\n",
+				r->name, ret);
+			fflush(stderr);
+			++failed;
+			break;
+		}
+	}
+	return failed;
+}
+
 unsigned
 validate_all(struct routine **routines,
              unsigned routines_cnt,
@@ -153,6 +198,10 @@ validate_all(struct routine **routines,
 			ret = validate_strlen_routine(routines[i], buf1);
 		} else if (routines[i]->type == routine_strcpy) {
 			ret = validate_strcpy_routine(routines[i], buf1, buf2);
+		} else if (routines[i]->type == routine_strcmp) {
+			ret = validate_strcmp_routine(routines[i], buf1);
+		} else if (routines[i]->type == routine_strncmp) {
+			ret = validate_strncmp_routine(routines[i], buf1);
 		} else {
 			printf(" SKIPPED VALIDATION.\n"); fflush(stdout);
 			continue;

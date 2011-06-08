@@ -1,6 +1,6 @@
 /* This file is part of sp-mem-throughput.
  *
- * Copyright (C) 2010 by Nokia Corporation
+ * Copyright (C) 2010-2011 by Nokia Corporation
  *
  * Authors: Tommi Rantala
  * Contact: Eero Tamminen <eero.tamminen@nokia.com>
@@ -50,6 +50,14 @@ static const struct {
 	[routine_strlen] = {
 		"strlen",
 		"Treat buffer1 as a string, calculate length.",
+	},
+	[routine_strcmp] = {
+		"strcmp",
+		"Treat buffer1 and buffer2 as strings, compare all bytes.",
+	},
+	[routine_strncmp] = {
+		"strncmp",
+		"Treat buffer1 and buffer2 as strings, compare all bytes.",
 	},
 };
 

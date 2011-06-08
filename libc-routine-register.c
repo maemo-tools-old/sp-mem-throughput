@@ -1,6 +1,6 @@
 /* This file is part of sp-mem-throughput.
  *
- * Copyright (C) 2010 by Nokia Corporation
+ * Copyright (C) 2010-2011 by Nokia Corporation
  *
  * Authors: Tommi Rantala
  * Contact: Eero Tamminen <eero.tamminen@nokia.com>
@@ -31,3 +31,5 @@ ROUTINE_REGISTER(memcpy, memcpy, "memcpy_libc", "C library memcpy")
 ROUTINE_REGISTER(memmove, memcpy, "memmove_libc", "C library memmove")
 ROUTINE_REGISTER(strlen, strlen, "strlen_libc", "C library strlen")
 ROUTINE_REGISTER(strcpy, strcpy, "strcpy_libc", "C library strcpy")
+ROUTINE_REGISTER(strcmp, strcmp, "strcmp_libc", "C library strcmp")
+ROUTINE_REGISTER(strncmp, strncmp, "strncmp_libc", "C library strncmp")
