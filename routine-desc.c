@@ -65,6 +65,7 @@ const char *
 rtype_name(enum routine_type t)
 {
 	if (t >= routine_types_count) abort();
+	if (routine_type_desc[t].name == NULL) abort();
 	return routine_type_desc[t].name;
 }
 
@@ -72,5 +73,6 @@ const char *
 rtype_desc(enum routine_type t)
 {
 	if (t >= routine_types_count) abort();
+	if (routine_type_desc[t].desc == NULL) abort();
 	return routine_type_desc[t].desc;
 }
