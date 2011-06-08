@@ -29,6 +29,7 @@ Original sources:
   libc/arch-arm/bionic/memcpy.S
   libc/arch-arm/bionic/memset.S
   libc/arch-arm/bionic/strlen.c
+  libc/arch-arm/bionic/strcpy.S
 
 /*
  * Copyright (C) 2008 The Android Open Source Project

@@ -29,17 +29,15 @@
  * Android adaptation and tweak by Jim Huang <jserv@0xlab.org>.
  */
 
-#include <machine/cpu-features.h>
-
 	.text
 
-	.global strcpy
-	.type strcpy, %function
+	.global android_strcpy
+	.type android_strcpy, %function
 	.align 4
 
-strcpy:
+android_strcpy:
 	.fnstart
-	PLD(r1, #0)
+	pld     [r1, #0]
 	eor	r2, r0, r1
 	mov	ip, r0
 	tst	r2, #3
@@ -68,7 +66,7 @@ strcpy:
 	  load stalls.  */
 	.p2align 2
 2:
-	PLD(r1, #8)
+	pld     [r1, #8]
 	ldr	r4, [r1], #4
 	sub	r2, r3, r5
 	bics	r2, r2, r3
@@ -136,3 +134,7 @@ strcpy:
 	cmp	r2, #0
 	bne	4b
 	bx	lr
+
+#if defined(__linux__) && defined(__ELF__)
+	.section .note.GNU-stack,"",%progbits
+#endif
