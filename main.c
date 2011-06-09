@@ -973,38 +973,46 @@ print_cpu_infos(FILE *stream)
 		if (!CPU_ISSET(i, proc_possible)) continue;
 		cs = get_cpu_scaling(i);
 		if (!cs) continue;
+		if (cs->avail_freqs_cnt == 0 && cs->avail_governors_cnt == 0)
+			goto next_cpu;
 		fprintf(stream, "    CPU%d scaling:\n", i);
-		fprintf(stream, "       Frequencies: ");
-		for (j=0; j < cs->avail_freqs_cnt; ++j) {
-			if (cs->avail_freqs[j] == cs->max_freq)
-				fprintf(stream, "[");
-			if (j>0 && j < cs->avail_freqs_cnt)
-				fprintf(stream, ", ");
-			if (cs->avail_freqs[j] == cs->cur_freq) {
-				fprintf(stream, "*%uMHz*",
-					cs->avail_freqs[j] / 1000);
-			} else {
-				fprintf(stream, "%uMHz",
-					cs->avail_freqs[j] / 1000);
-			}
-			if (cs->avail_freqs[j] == cs->min_freq)
-				fprintf(stream, "]");
-		}
-		fprintf(stream, "\n");
-		fprintf(stream, "       Governors: ");
-		for (j=0; j < cs->avail_governors_cnt; ++j) {
-			if (j>0 && j < cs->avail_governors_cnt)
-				fprintf(stream, ", ");
-			if (strcmp(cs->avail_governors[j], cs->governor) == 0) {
-				fprintf(stream, "[%s]", cs->avail_governors[j]);
-			} else {
-				fprintf(stream, "%s", cs->avail_governors[j]);
-			}
-		}
-		fprintf(stream, "\n");
-		/* Generate a warning if there seems to be a possibility of CPU
-		 * frequency changes during testing. */
 		if (cs->avail_freqs_cnt > 0) {
+			fprintf(stream, "       Frequencies: ");
+			for (j=0; j < cs->avail_freqs_cnt; ++j) {
+				if (cs->avail_freqs[j] == cs->max_freq)
+					fprintf(stream, "[");
+				if (j>0 && j < cs->avail_freqs_cnt)
+					fprintf(stream, ", ");
+				if (cs->avail_freqs[j] == cs->cur_freq) {
+					fprintf(stream, "*%uMHz*",
+						cs->avail_freqs[j] / 1000);
+				} else {
+					fprintf(stream, "%uMHz",
+						cs->avail_freqs[j] / 1000);
+				}
+				if (cs->avail_freqs[j] == cs->min_freq)
+					fprintf(stream, "]");
+			}
+			fprintf(stream, "\n");
+		}
+		if (cs->avail_governors_cnt > 0) {
+			fprintf(stream, "       Governors: ");
+			for (j=0; j < cs->avail_governors_cnt; ++j) {
+				if (j>0 && j < cs->avail_governors_cnt)
+					fprintf(stream, ", ");
+				if (strcmp(cs->avail_governors[j],
+						cs->governor) == 0) {
+					fprintf(stream, "[%s]",
+						cs->avail_governors[j]);
+				} else {
+					fprintf(stream, "%s",
+						cs->avail_governors[j]);
+				}
+			}
+			fprintf(stream, "\n");
+			/* Generate a warning if there seems to be a
+			 * possibility of CPU frequency changes during testing.
+			 */
 			max_avail_freq = cs->avail_freqs[0];
 			for (j=1; j < cs->avail_freqs_cnt; ++j) {
 				if (max_avail_freq > cs->avail_freqs[j])
@@ -1017,6 +1025,7 @@ print_cpu_infos(FILE *stream)
 						"may alter results.\n");
 			}
 		}
+next_cpu:
 		free(cs->avail_freqs);
 		free(cs->avail_governors);
 		free(cs->driver);
