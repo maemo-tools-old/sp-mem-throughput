@@ -1,3 +1,15 @@
+sp-mem-throughput (0.3) unstable; urgency=low
+
+  * Change in reported numbers for memcpy() and strcpy(): take both read and
+    written bytes in account when reporting throughput.
+  * New routine categories: strcmp, strncmp, strchr, strncpy
+  * Include ARM strcmp() and strcpy() from bionic.git for benchmarking
+    purposes.
+  * Fixes: NB#226812 - memory throughput test should be extended to have
+    str-specific tests
+
+ -- Tommi Rantala <ext-tommi.1.rantala@nokia.com>  Fri, 10 Jun 2011 11:24:34 +0300
+
 sp-mem-throughput (0.2) unstable; urgency=low
 
   * Include memset() routine from the cortex-strings / Linaro project.
