@@ -69,6 +69,11 @@ static char *csv_filename, *argv_copy, *banner;
 void
 routine_register(struct routine *r)
 {
+	if (r == NULL || r->name == NULL || r->desc == NULL ||
+	    r->type >= routine_types_count ||
+	    r->buffers_used == 0 || r->buffers_used > 2) {
+		abort();
+	}
 	/* fprintf(stderr, "%s(): r->name='%s', r->desc='%s'.\n",
 		__func__, r->name, r->desc); */
 	routines = realloc(routines, (routines_cnt+1)*sizeof(struct routine *));
