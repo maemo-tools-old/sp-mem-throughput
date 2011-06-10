@@ -128,7 +128,8 @@ output_csv(const char *csv_filename,
 				    rtype_name(routines[i]->type),
 				    routines[i]->name,
 				    b,
-				    m_thr(&routines[i]->measurements[j*repeats+k], b),
+				    m_thr(&routines[i]->measurements[j*repeats+k], b,
+					    routines[i]->buffers_used),
 				    routines[i]->measurements[j*repeats+k].calls,
 				    routines[i]->measurements[j*repeats+k].duration_us) < 0) {
 					goto output_done;

@@ -87,9 +87,9 @@ routine_register(struct routine *r)
 }
 
 double
-m_thr(const struct measurement *m, unsigned b)
+m_thr(const struct measurement *m, unsigned b, unsigned buffers_used)
 {
-	double megabytes = (b/1024.) * (m->calls/1024.);
+	double megabytes = (b/1024.) * (m->calls/1024.) * buffers_used;
 	double secs = m->duration_us / 1000000.;
 	return megabytes / secs;
 }
@@ -97,8 +97,11 @@ m_thr(const struct measurement *m, unsigned b)
 static int
 measurement_cmp(const void *a, const void *b)
 {
-	double thr1 = m_thr((struct measurement *)a, block_size);
-	double thr2 = m_thr((struct measurement *)b, block_size);
+	/* We can use buffers_used=1 in the m_thr() call, as it does not affect
+	 * sorting order (assuming we are only comparing measurements from the
+	 * same routine). */
+	double thr1 = m_thr((struct measurement *)a, block_size, 1);
+	double thr2 = m_thr((struct measurement *)b, block_size, 1);
 	if (thr1 < thr2) return -1;
 	if (thr1 > thr2) return 1;
 	return 0;
@@ -189,7 +192,8 @@ print_measurement(struct routine *r)
 		}
 		printf("%-9s", bs);
 		for (j=0, rowcnt=0; j < repeats; ++j) {
-			throughput = m_thr(&r->measurements[i*repeats+j], b);
+			throughput = m_thr(&r->measurements[i*repeats+j], b,
+					r->buffers_used);
 			if (printf("|%7.1f", throughput) <= 8) {
 				if (rowcnt < 4) printf(" ");
 			}
@@ -263,22 +267,6 @@ static volatile sig_atomic_t timerflag;
 static void alarm_handler(int sig)
 {
 	timerflag = sig;
-}
-
-/* Do we need two buffers for this routine? */
-static int
-routine_copies(struct routine *r)
-{
-	switch (r->type) {
-		case routine_memcpy: /* fall through */
-		case routine_strcmp: /* fall through */
-		case routine_strncmp:/* fall through */
-		case routine_strcpy: /* fall through */
-		case routine_strncpy:
-			return 1;
-		default:
-			return 0;
-	}
 }
 
 static inline void
@@ -396,7 +384,7 @@ test_run(struct routine *r)
 			runner(r);
 			timing1 = get_time_us();
 			if (sliding_offset) {
-				if (no_swap_buffers==0 && routine_copies(r)) {
+				if (no_swap_buffers==0 && r->buffers_used==2) {
 					do {
 						runner(r);
 						++reps;
@@ -413,7 +401,7 @@ test_run(struct routine *r)
 					} while (timerflag == 0);
 				}
 			} else {
-				if (no_swap_buffers==0 && routine_copies(r)) {
+				if (no_swap_buffers==0 && r->buffers_used==2) {
 					do {
 						runner(r);
 						++reps;
@@ -864,7 +852,8 @@ allocate_arrays(void)
 	int need1=1, need2=0;
 	for (i=0; i < routines_cnt; ++i) {
 		if (!routines[i]->flagged) continue;
-		if (routine_copies(routines[i])) need2=1;
+		if (routines[i]->buffers_used == 2)
+			need2=1;
 	}
 	buf_len = block_sizes_largest+(2*4096);
 	if (sliding_offset) buf_len += 256;

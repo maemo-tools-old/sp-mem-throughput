@@ -1,23 +1,24 @@
-.TH SP-MEM-THROUGHPUT 1 "2010-10-12"
+.TH SP-MEM-THROUGHPUT 1 "2011-06-10"
 .SH NAME
 sp-mem-throughput - memory throughput testing suite
 .SH SYNOPSIS
-sp-mem-throughput [OPT...] <test type>
+sp-mem-throughput [OPT...] <test type or -A/--all> [<test type...>]
 .SH DESCRIPTION
-\fIsp-mem-throughput\fP is a testing suite for memory throughput achived by
+\fIsp-mem-throughput\fP is a testing suite for measuring the memory throughput
+(bytes read and written from memory within certain time period) achived by
 different kinds of memory access patterns, such as read only, write only or
-copy.
+copy. \fIsp-mem-throughput\fP can also be used as a benchmarking tool for
+comparing different implementations of common library routines.
 .SH CONSOLE OUTPUT EXPLANATION
 \fIsp-mem-throughput\fP produces results on the screen and in CSV file format.
 The screen output format is explained here.
 
 .SS COMMAND LINE AND VERSION NUMBER
 Here, we are benchmarking the \fBmemset\fP() routine from the C library using
-\fIsp-mem-throughput\fP default settings. This example output was produced by
-version 0.1.
+\fIsp-mem-throughput\fP default settings.
 
     # ./sp-mem-throughput memset_libc
-    sp-mem-throughput: memory performance test suite v0.1
+    sp-mem-throughput: memory performance test suite v0.3
 
 .SS SCHEDULING INFORMATION
 \fIsp-mem-throughput\fP raises priority to maximum possible on startup to
@@ -32,8 +33,10 @@ time, but here it did not succeed.
 
 .SS CPU INFORMATION
 In this system we have one cpu, and \fIsp-mem-throughput\fP is executed on that
-one. The CPU scaling governor is set to \fIondemand\fP, which may distort the
-results. Setting the governor to \fBperformance\fP is recommended.
+one. From the sp-mem-throughput output we see that the CPU scaling governor is
+set to \fIondemand\fP (it is printed in brackets). Use of CPU governors that
+adjust the frequency during testing with sp-mem-throughput may result to poor
+quality results. Setting the governor to \fBperformance\fP is recommended.
 
     CPU information:
         Possible CPUs in system: [IDs: 0]
@@ -177,9 +180,9 @@ Benchmark each routine from the memcpy category with 1-256 bytes:
 .br
 	sp-mem-throughput -b1-256 -d50 memcpy
 .PP
-Benchmark reading 1MB, 4MB and 32MB of data using two NEON routines:
+Benchmark reading 1MB, 4MB and 32MB of data using two ARM NEON routines:
 .br
 	sp-mem-throughput -b1MB,4MB,32MB read_vldm_32 read_vld1_32
 .PP
 .SH COPYRIGHT
-Copyright (C) 2004, 2010 by Nokia Corporation. Contact: Eero Tamminen <eero.tamminen@nokia.com>.
+Copyright (C) 2004, 2010-2011 by Nokia Corporation. Contact: Eero Tamminen <eero.tamminen@nokia.com>.

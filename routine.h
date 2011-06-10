@@ -59,6 +59,7 @@ struct routine {
 	const char *name;
 	const char *desc;
 	enum routine_type type;
+	unsigned buffers_used : 2;
 	unsigned flagged : 1;
 	struct measurement {
 		unsigned calls;
@@ -68,10 +69,11 @@ struct routine {
 
 void routine_register(struct routine *);
 
-#define ROUTINE_REGISTER(_f, _t, _n, _d)\
+#define ROUTINE_REGISTER(_f, _t, _b, _n, _d)\
 	static struct routine _f##_routine =\
 		{ .fn._t##_ = (_f),\
 		  .type = routine_##_t,\
+		  .buffers_used = _b,\
 		  .name = _n,\
 		  .desc = _d }; \
 	static void _f##_register_hook(void) __attribute__((constructor));\
@@ -79,36 +81,40 @@ void routine_register(struct routine *);
 		{ routine_register(&_f##_routine); };
 
 #define ROUTINE_REGISTER_MEMREAD(_func, _desc)\
-	ROUTINE_REGISTER(_func, memread, #_func, _desc)
+	ROUTINE_REGISTER(_func, memread, 1, #_func, _desc)
 
 #define ROUTINE_REGISTER_MEMCHR(_func, _desc)\
-	ROUTINE_REGISTER(_func, memchr, #_func, _desc)
+	ROUTINE_REGISTER(_func, memchr, 1, #_func, _desc)
 
 #define ROUTINE_REGISTER_MEMSET(_func, _desc)\
-	ROUTINE_REGISTER(_func, memset, #_func, _desc)
+	ROUTINE_REGISTER(_func, memset, 1, #_func, _desc)
 
 #define ROUTINE_REGISTER_MEMCPY(_func, _desc)\
-	ROUTINE_REGISTER(_func, memcpy, #_func, _desc)
+	ROUTINE_REGISTER(_func, memcpy, 2, #_func, _desc)
 
 #define ROUTINE_REGISTER_STRCPY(_func, _desc)\
-	ROUTINE_REGISTER(_func, strcpy, #_func, _desc)
+	ROUTINE_REGISTER(_func, strcpy, 2, #_func, _desc)
 
 #define ROUTINE_REGISTER_STRNCPY(_func, _desc)\
-	ROUTINE_REGISTER(_func, strncpy, #_func, _desc)
+	ROUTINE_REGISTER(_func, strncpy, 2, #_func, _desc)
 
 #define ROUTINE_REGISTER_STRLEN(_func, _desc)\
-	ROUTINE_REGISTER(_func, strlen, #_func, _desc)
+	ROUTINE_REGISTER(_func, strlen, 1, #_func, _desc)
 
 #define ROUTINE_REGISTER_STRCMP(_func, _desc)\
-	ROUTINE_REGISTER(_func, strcmp, #_func, _desc)
+	ROUTINE_REGISTER(_func, strcmp, 2, #_func, _desc)
 
 #define ROUTINE_REGISTER_STRNCMP(_func, _desc)\
-	ROUTINE_REGISTER(_func, strncmp, #_func, _desc)
+	ROUTINE_REGISTER(_func, strncmp, 2, #_func, _desc)
 
 #define ROUTINE_REGISTER_STRCHR(_func, _desc)\
-	ROUTINE_REGISTER(_func, strchr, #_func, _desc)
+	ROUTINE_REGISTER(_func, strchr, 1, #_func, _desc)
 
-double m_thr(const struct measurement *, unsigned block_size);
+/* Throughput for one measurement as performed with the given block size and
+ * with the number of buffers used by the routine.
+ */
+double m_thr(const struct measurement *, unsigned block_size,
+		unsigned buffers_used);
 
 #ifdef __cplusplus
 }
