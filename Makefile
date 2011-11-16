@@ -22,7 +22,12 @@ COMMON_SRCS += validate.c
 COMMON_SRCS += directfb-memcpy.c
 COMMON_SRCS += libc-routine-register.c
 
-MACHINE := $(shell uname -m)
+# Sbox GNU uname gives "arm", N900 busybox uname gives "armv7l",
+# MeeGo uname gives "armv7l"
+# -> clip to first 3 letters of the architecture name
+MACHINE := $(shell uname -m|cut -b-3)
+
+# some of these assumes armv7 with NEON etc support
 ifeq ($(MACHINE),arm)
 CCFLAGS := -mfpu=neon $(CCFLAGS)
 ARCH_OBJS += arch/arm/linux-arm-memchr.o
