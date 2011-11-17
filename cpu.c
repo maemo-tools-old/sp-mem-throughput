@@ -1,6 +1,6 @@
 /* This file is part of sp-mem-throughput.
  *
- * Copyright (C) 2010 by Nokia Corporation
+ * Copyright (C) 2010-2011 by Nokia Corporation
  *
  * Authors: Tommi Rantala
  * Contact: Eero Tamminen <eero.tamminen@nokia.com>
