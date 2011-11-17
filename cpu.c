@@ -183,6 +183,21 @@ done:
 	return ret;
 }
 
+static int
+unsigned_rev_cmp(const void *a, const void *b)
+{
+	const unsigned aa = *((unsigned *)a);
+	const unsigned bb = *((unsigned *)b);
+	if (aa > bb)
+		return -1;
+	if (aa < bb)
+		return 1;
+	return 0;
+}
+
+/* Gets the available frequencies in descended sorted order:
+ *       1000000 800000 600000 300000
+ */
 static void
 get_avail_freqs(unsigned cpu, struct cpu_scaling *cs)
 {
@@ -205,6 +220,7 @@ get_avail_freqs(unsigned cpu, struct cpu_scaling *cs)
 		ret[cnt] = val;
 		++cnt;
 	}
+	qsort(ret, cnt, sizeof(unsigned), unsigned_rev_cmp);
 	cs->avail_freqs = ret;
 	cs->avail_freqs_cnt = cnt;
 done:
