@@ -296,7 +296,7 @@ get_cpu_scaling(int cpu)
 {
 	struct cpu_scaling *c;
 	c = calloc(1, sizeof(struct cpu_scaling));
-	if (!c) goto error;
+	if (!c) goto out;
 	get_avail_freqs(cpu, c);
 	get_avail_governors(cpu, c);
 	get_cur_freq(cpu, c);
@@ -304,7 +304,6 @@ get_cpu_scaling(int cpu)
 	get_governor(cpu, c);
 	get_max_freq(cpu, c);
 	get_min_freq(cpu, c);
+out:
 	return c;
-error:
-	return NULL;
 }
