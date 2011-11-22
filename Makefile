@@ -79,7 +79,7 @@ sp-mem-throughput: $(COMMON_SRCS) $(ARCH_SRCS) $(ARCH_OBJS)
 
 install: sp-mem-throughput sp-mem-throughput.1
 	install -D sp-mem-throughput $(DESTDIR)/usr/bin/sp-mem-throughput
-	install -D sp-mem-throughput.1 $(DESTDIR)/usr/share/man/man1/sp-mem-throughput.1
+	install -m644 -D sp-mem-throughput.1 $(DESTDIR)/usr/share/man/man1/sp-mem-throughput.1
 
 clean:
 	rm -f $(ARCH_OBJS) $(ARCH_CLEAN)

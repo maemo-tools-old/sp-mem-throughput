@@ -36,9 +36,26 @@ make install DESTDIR=%{buildroot}
 rm -rf %{buildroot}
 
 %files
-%defattr(755,root,root,-)
+%defattr(-,root,root,-)
 %{_bindir}/sp-mem-throughput
-%defattr(644,root,root,-)
 %{_mandir}/man1/sp-mem-throughput.1.gz
 %doc COPYING 
 
+
+%changelog
+* Fri Jun 10 2011 Eero Tamminen <eero.tamminen@nokia.com> 0.3
+  * Change in reported numbers for memcpy() and strcpy(): take both read and
+    written bytes in account when reporting throughput.
+  * New routine categories: strcmp, strncmp, strchr, strncpy
+  * Include ARM strcmp() and strcpy() from bionic.git for benchmarking
+    purposes.
+  *  - memory throughput test should be extended to have
+    str-specific tests
+
+* Tue Oct 19 2010 Eero Tamminen <eero.tamminen@nokia.com> 0.2
+  * Include memset() routine from the cortex-strings / Linaro project.
+  * Extend manual page: explain the console output.
+  * Fix executable stack.
+
+* Fri Oct 01 2010 Eero Tamminen <eero.tamminen@nokia.com> 0.1
+  * Initial version of sp-mem-throughput released. 
