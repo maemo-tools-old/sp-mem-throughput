@@ -15,10 +15,10 @@ COMMON_SRCS += cpu.c
 COMMON_SRCS += csv.c
 COMMON_SRCS += main.c
 COMMON_SRCS += routine-desc.c
-COMMON_SRCS += routines.c
 COMMON_SRCS += sched-util.c
 COMMON_SRCS += validate.c
 
+COMMON_SRCS += routines.c
 COMMON_SRCS += directfb-memcpy.c
 COMMON_SRCS += libc-routine-register.c
 
