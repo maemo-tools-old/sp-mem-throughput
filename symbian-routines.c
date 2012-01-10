@@ -529,3 +529,59 @@ void MemAllocTest( int** aMemory, int aSize, int aIterations)
         }
 
     }
+
+#include "routine.h"
+
+void *
+sym_write_sequential(void *ptr, int c, size_t n)
+{
+	c |= (c << 24) | (c << 16) | (c << 8);
+	WriteSequential(ptr, n, 1, c);
+	return ptr;
+}
+ROUTINE_REGISTER_MEMSET(sym_write_sequential,
+	"Write memory sequentially 32 bytes per iteration with 4 byte aligned writes")
+
+void *
+sym_write_per_cacheline(void *ptr, int c, size_t n)
+{
+	c |= (c << 24) | (c << 16) | (c << 8);
+	WritePerCacheline(ptr, n, 1, c);
+	return ptr;
+}
+ROUTINE_REGISTER_MEMSET(sym_write_per_cacheline,
+	"Striped 32 bytes per iteration striped to cachelines write routine with 4 byte aligned writes")
+
+void *
+sym_write_per_page(void *ptr, int c, size_t n)
+{
+	c |= (c << 24) | (c << 16) | (c << 8);
+	WritePerPage(ptr, n, 1, c);
+	return ptr;
+}
+ROUTINE_REGISTER_MEMSET(sym_write_per_page,
+	"Striped 16 bytes per page per iteration write routine with 4 byte aligned writes")
+
+void
+sym_read_sequential(const void *ptr, size_t n)
+{
+	ReadSequential(ptr, n, 1);
+}
+ROUTINE_REGISTER_MEMREAD(sym_read_sequential,
+	"Sequential read through input with 4 byte aligned reads")
+
+void
+sym_read_per_cacheline(const void *ptr, size_t n)
+{
+	ReadPerCacheline(ptr, n, 1);
+}
+ROUTINE_REGISTER_MEMREAD(sym_read_per_cacheline,
+	"Read through input from two cachelines with 4 byte aligned reads")
+
+void
+sym_read_per_page(const void *ptr, size_t n)
+{
+	ReadPerPage(ptr, n, 1);
+}
+ROUTINE_REGISTER_MEMREAD(sym_read_per_page,
+	"Read 16 bytes per page per iteration with 4 byte aligned reads")
