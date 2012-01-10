@@ -181,7 +181,7 @@ aMemory = pointer to big enough memory buffer
 aSize = 16 * 1024
 aIterations = 1024
 */
-int ReadSequential(int* aMemory, int aSize, int aIterations)
+int ReadSequential(const int* aMemory, int aSize, int aIterations)
     {
     int d1,d2,d3,d4,d5,d6,d7,d8,sum;
     sum = 0;
@@ -191,7 +191,7 @@ int ReadSequential(int* aMemory, int aSize, int aIterations)
     d8 = 0;
     while (aIterations--)
         {
-        int* pos = aMemory;
+        const int* pos = aMemory;
         int loopcount = aSize;
 
         // The whole memory block is read on after one
@@ -225,7 +225,7 @@ aMemory = pointer to big enough memory buffer
 aSize = 2048 * 1024
 aIterations = 1
 */
-int ReadPerCacheline( int* aMemory, int aSize, int aIterations )
+int ReadPerCacheline( const int* aMemory, int aSize, int aIterations )
     {
     int d1,d2,d3,d4,d5,d6,d7,d8,sum;
     sum = 0;
@@ -245,7 +245,7 @@ int ReadPerCacheline( int* aMemory, int aSize, int aIterations )
         while (offset < CACHE_LINESIZE)
             {
             int loopcount = aSize;
-            int* pos = aMemory + offset;
+            const int* pos = aMemory + offset;
 
             // Offset is 32 Bytes
             // CACHE_LINESIZE is 8
@@ -281,7 +281,7 @@ aMemory = pointer to big enough memory buffer
 aSize = 2048 * 1024
 aIterations = 1
 */
-int ReadPerPage( int* aMemory, int aSize, int aIterations )
+int ReadPerPage( const int* aMemory, int aSize, int aIterations )
     {
     int d1,d2,d3,d4,sum;
     sum = 0;
@@ -295,7 +295,7 @@ int ReadPerPage( int* aMemory, int aSize, int aIterations )
                 {
 
                 int loopcount = aSize;
-                int* pos = aMemory + offset + offset2;
+                const int* pos = aMemory + offset + offset2;
                 while (loopcount > 0)
                     {
                     d1 = pos[0];
