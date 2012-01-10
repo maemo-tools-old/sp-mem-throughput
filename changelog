@@ -1,3 +1,9 @@
+sp-mem-throughput (0.4), 10 Jan 2012:
+  * Fix misplaced brackets in the "available frequencies" that we report seen
+    on some platforms.
+  * Include routines extracted from symbian test software.
+  * Do not try to compile the strlen routine from bionic in Thumb Mode to fix
+    broken build.
 
 sp-mem-throughput (0.3), 10 Jun 2011:
   * Change in reported numbers for memcpy() and strcpy(): take both read and
