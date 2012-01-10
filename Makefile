@@ -21,6 +21,7 @@ COMMON_SRCS += validate.c
 COMMON_SRCS += routines.c
 COMMON_SRCS += directfb-memcpy.c
 COMMON_SRCS += libc-routine-register.c
+COMMON_SRCS += symbian-routines.c
 
 # Sbox GNU uname gives "arm", N900 busybox uname gives "armv7l",
 # MeeGo uname gives "armv7l"
