@@ -64,7 +64,6 @@ Note5. Tests should be compiled with the best possible speed optimisation flags.
 
 #define CACHE_LINESIZE      (32 / sizeof(int)) // cache line size (int)
 #define PAGE_SIZE           (4096 / sizeof(int))  // page size (int)
-#define WRITE_DATA          0
 
 /*
 Paramenters for test case 6:
@@ -72,7 +71,7 @@ aMemory = pointer to big enough memory buffer
 aSize = 2048 * 1024
 aIterations = 1
 */
-void WriteSequential( int* aMemory, int aSize, int aIterations )
+void WriteSequential( int* aMemory, int aSize, int aIterations, int c )
     {
     while (aIterations--)
         {
@@ -80,14 +79,14 @@ void WriteSequential( int* aMemory, int aSize, int aIterations )
         int* pos = aMemory;
         while (loopcount > 0)
             {
-                *pos++ = WRITE_DATA;
-                *pos++ = WRITE_DATA;
-                *pos++ = WRITE_DATA;
-                *pos++ = WRITE_DATA;
-                *pos++ = WRITE_DATA;
-                *pos++ = WRITE_DATA;
-                *pos++ = WRITE_DATA;
-                *pos++ = WRITE_DATA;
+                *pos++ = c;
+                *pos++ = c;
+                *pos++ = c;
+                *pos++ = c;
+                *pos++ = c;
+                *pos++ = c;
+                *pos++ = c;
+                *pos++ = c;
 
                 loopcount -= sizeof(int) * 8;
             }
@@ -100,7 +99,7 @@ aMemory = pointer to big enough memory buffer
 aSize = 2048 * 1024
 aIterations = 1
 */
-void WritePerCacheline( int* aMemory, int aSize, int aIterations )
+void WritePerCacheline( int* aMemory, int aSize, int aIterations, int c )
     {
     while (aIterations--)
         {
@@ -111,14 +110,14 @@ void WritePerCacheline( int* aMemory, int aSize, int aIterations )
             int* pos = aMemory + offset;
             while (loopcount > 0)
                 {
-                pos[0] = WRITE_DATA;
-                pos[CACHE_LINESIZE] = WRITE_DATA;
-                pos[2 * CACHE_LINESIZE] = WRITE_DATA;
-                pos[3 * CACHE_LINESIZE] = WRITE_DATA;
-                pos[4 * CACHE_LINESIZE] = WRITE_DATA;
-                pos[5 * CACHE_LINESIZE] = WRITE_DATA;
-                pos[6 * CACHE_LINESIZE] = WRITE_DATA;
-                pos[7 * CACHE_LINESIZE] = WRITE_DATA;
+                pos[0] = c;
+                pos[CACHE_LINESIZE] = c;
+                pos[2 * CACHE_LINESIZE] = c;
+                pos[3 * CACHE_LINESIZE] = c;
+                pos[4 * CACHE_LINESIZE] = c;
+                pos[5 * CACHE_LINESIZE] = c;
+                pos[6 * CACHE_LINESIZE] = c;
+                pos[7 * CACHE_LINESIZE] = c;
 
                 loopcount -= sizeof(int) * 8 * CACHE_LINESIZE;
                 pos += 8 * CACHE_LINESIZE;
@@ -135,7 +134,7 @@ aMemory = pointer to big enough memory buffer
 aSize = 2048 * 1024
 aIterations = 1
 */
-void WritePerPage( int* aMemory, int aSize, int aIterations )
+void WritePerPage( int* aMemory, int aSize, int aIterations, int c )
     {
     while (aIterations--)
         {
@@ -149,10 +148,10 @@ void WritePerPage( int* aMemory, int aSize, int aIterations )
                 int* pos = aMemory + offset + offset2;
                 while (loopcount > 0)
                     {
-                    pos[0] = WRITE_DATA;
-                    pos[PAGE_SIZE] = WRITE_DATA;
-                    pos[2 * PAGE_SIZE] = WRITE_DATA;
-                    pos[3 * PAGE_SIZE] = WRITE_DATA;
+                    pos[0] = c;
+                    pos[PAGE_SIZE] = c;
+                    pos[2 * PAGE_SIZE] = c;
+                    pos[3 * PAGE_SIZE] = c;
 
                     loopcount -= sizeof(int) * 4 * PAGE_SIZE;
                     pos += 4 * PAGE_SIZE;
