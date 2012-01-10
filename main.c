@@ -503,11 +503,11 @@ print_available_routines(FILE *stream)
 	fprintf(stream,
 ":: Categories and Routines :::::::::::::::::::::::::::::::::::::::::::::::::::::\n\n");
 	for (i=0; i < routine_types_count; ++i) {
-		fprintf(stream, "%-20s   %s\n",
+		fprintf(stream, "%-25s   %s\n",
 			rtype_name(i), rtype_desc(i));
 		for (j=0; j < routines_cnt; ++j) {
 			if (routines[j]->type != i) continue;
-			fprintf(stream, "- %-20s %s\n",
+			fprintf(stream, "- %-25s %s\n",
 				routines[j]->name,
 				routines[j]->desc);
 		}

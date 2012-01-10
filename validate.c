@@ -262,7 +262,7 @@ validate_all(struct routine **routines,
 	printf("Validating routines...\n");
 	fflush(stdout);
 	for (i=0; i < routines_cnt; ++i) {
-		printf("- %-20s ...", routines[i]->name); fflush(stdout);
+		printf("- %-25s ...", routines[i]->name); fflush(stdout);
 		ret = 0;
 		block_size_iter_reset();
 		if (validators[routines[i]->type] != NULL) {
