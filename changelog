@@ -5,8 +5,6 @@ sp-mem-throughput (0.3), 10 Jun 2011:
   * New routine categories: strcmp, strncmp, strchr, strncpy
   * Include ARM strcmp() and strcpy() from bionic.git for benchmarking
     purposes.
-  *  - memory throughput test should be extended to have
-    str-specific tests
 
 sp-mem-throughput (0.2), 19 Oct 2010:
   * Include memset() routine from the cortex-strings / Linaro project.
