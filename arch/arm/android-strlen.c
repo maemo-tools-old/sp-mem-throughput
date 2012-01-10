@@ -25,6 +25,9 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+
+#ifndef __thumb__
+
 #include <string.h>
 #include <stdint.h>
 
@@ -130,3 +133,5 @@ size_t android_strlen(const char *s)
 done:
     return l;
 }
+
+#endif
