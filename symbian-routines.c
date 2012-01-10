@@ -62,8 +62,8 @@ Note5. Tests should be compiled with the best possible speed optimisation flags.
 
 #include <string.h> // for memcpy() and memset()
 
-#define CACHE_LINESIZE      (32 / sizeof(int)) // cache line size (int)
-#define PAGE_SIZE           (4096 / sizeof(int))  // page size (int)
+#define CACHE_LINESIZE      ((int)(32 / sizeof(int))) // cache line size (int)
+#define PAGE_SIZE           ((int)(4096 / sizeof(int)))  // page size (int)
 
 /*
 Paramenters for test case 6:
