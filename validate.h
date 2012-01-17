@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-unsigned validate_all(struct routine **routines, size_t routines_cnt,
+unsigned validate_all(struct routine **routines, unsigned routines_cnt,
 			char *buf1, char *buf2);
 
 #ifdef __cplusplus
