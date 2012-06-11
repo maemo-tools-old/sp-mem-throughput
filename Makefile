@@ -76,7 +76,7 @@ else
 endif
 
 sp-mem-throughput: $(COMMON_SRCS) $(ARCH_SRCS) $(ARCH_OBJS)
-	$(CC) $(CCFLAGS) $(LDFLAGS) $+ -o $@
+	$(CC) $(CCFLAGS) $+ $(LDFLAGS) -o $@
 
 install: sp-mem-throughput sp-mem-throughput.1
 	install -D sp-mem-throughput $(DESTDIR)/usr/bin/sp-mem-throughput
