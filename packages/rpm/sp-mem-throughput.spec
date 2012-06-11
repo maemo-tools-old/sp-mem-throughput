@@ -1,6 +1,6 @@
 Name: sp-mem-throughput
-Version: 0.3.0
-Release: 1%{?dist}
+Version: 0.4.1
+Release: 0%{?dist}
 Summary: Memory throughput testing tool
 Group: Development/Tools
 License: GPLv2+
@@ -43,6 +43,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Jun 11 2012 Eero Tamminen <eero.tamminen@nokia.com> 0.4.1
+  * Update to new version with Symbian routines + compile fixes
+    for different platforms
+
 * Fri Jun 10 2011 Eero Tamminen <eero.tamminen@nokia.com> 0.3
   * Change in reported numbers for memcpy() and strcpy(): take both read and
     written bytes in account when reporting throughput.
