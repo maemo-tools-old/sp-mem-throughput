@@ -1,3 +1,6 @@
+sp-mem-throughput (0.4.1), 11 Jun 2012:
+  * Fix linker line for --as-needed
+
 sp-mem-throughput (0.4), 10 Jan 2012:
   * Fix misplaced brackets in the "available frequencies" that we report seen
     on some platforms.
