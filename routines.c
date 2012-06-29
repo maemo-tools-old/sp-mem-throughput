@@ -74,7 +74,7 @@ memread_c_4(const void *s, size_t n)
 {
 	const uint32_t *s_32 = s;
 	size_t c = n / sizeof(uint32_t);
-	volatile uint32_t temp;
+	volatile uint32_t temp __attribute__((unused));
 	while (c-- > 0) { temp = *s_32++; }
 }
 ROUTINE_REGISTER_MEMREAD(memread_c_4,
@@ -85,7 +85,7 @@ memread_c_8(const void *s, size_t n)
 {
 	const uint64_t *s_64 = s;
 	size_t c = n / sizeof(uint64_t);
-	volatile uint64_t temp;
+	volatile uint64_t temp __attribute__((unused));
 	while (c-- > 0) { temp = *s_64++; }
 }
 ROUTINE_REGISTER_MEMREAD(memread_c_8,
